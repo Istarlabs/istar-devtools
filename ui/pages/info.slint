@@ -1,0 +1,185 @@
+import { Button, ListView } from "std-widgets.slint";
+import { IconSet, IconDisplay } from "@lucide";
+import { PageContainer } from "../components/page-container.slint";
+import { SeparatorLine } from "../components/separator-line.slint";
+import { Theme } from "../theme.slint";
+import { LicenseState } from "../globals.slint";
+
+export component InfoPage inherits PageContainer {
+    title-text: @tr("About");
+    subtitle-text: @tr("Developer toolbox built with Rust and Slint");
+
+    Rectangle {
+        background: Theme.color-surface;
+        border-radius: 8px;
+        height: 64px;
+        HorizontalLayout {
+            padding-left: Theme.space-lg;
+            padding-right: Theme.space-lg;
+            spacing: Theme.space-md;
+            alignment: center;
+
+            VerticalLayout {
+                alignment: center;
+                horizontal-stretch: 1;
+                Text {
+                    text: "Dev Tools";
+                    font-size: Theme.font-lg;
+                    color: #e0e0e0;
+                }
+                Text {
+                    text: LicenseState.version-text + " · GPL-3.0-or-later";
+                    font-size: Theme.font-xs;
+                    color: Theme.color-muted;
+                }
+            }
+
+            Text {
+                text: "Pascal Klose";
+                font-size: Theme.font-sm;
+                color: Theme.color-muted;
+                vertical-alignment: center;
+            }
+        }
+    }
+
+    Rectangle {
+        background: Theme.color-surface;
+        border-radius: 8px;
+        HorizontalLayout {
+            padding: Theme.space-md;
+            spacing: Theme.space-md;
+
+            Text {
+                text: @tr("This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License, version 2 only, as published by the Free Software Foundation. It is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.");
+                font-size: Theme.font-xs;
+                color: Theme.color-muted;
+                wrap: word-wrap;
+                horizontal-stretch: 1;
+                vertical-alignment: center;
+            }
+
+            Button {
+                text: @tr("View license");
+                clicked => {
+                    LicenseState.open-url("https://www.gnu.org/licenses/old-licenses/gpl-2.0.html");
+                }
+            }
+        }
+    }
+
+    SeparatorLine { }
+
+    Text {
+        text: @tr("Third-Party Dependencies");
+        font-size: Theme.font-md;
+        color: #e0e0e0;
+    }
+
+    HorizontalLayout {
+        padding-left: Theme.space-md;
+        padding-right: Theme.space-md;
+        spacing: 0px;
+
+        Text {
+            text: @tr("Package");
+            font-size: Theme.font-xs;
+            color: Theme.color-subtle;
+            min-width: 180px;
+            horizontal-stretch: 0;
+        }
+        Text {
+            text: @tr("Version");
+            font-size: Theme.font-xs;
+            color: Theme.color-subtle;
+            min-width: 80px;
+            horizontal-stretch: 0;
+        }
+        Text {
+            text: @tr("License");
+            font-size: Theme.font-xs;
+            color: Theme.color-subtle;
+            min-width: 200px;
+            horizontal-stretch: 0;
+        }
+        Text {
+            text: @tr("Description");
+            font-size: Theme.font-xs;
+            color: Theme.color-subtle;
+            horizontal-stretch: 1;
+        }
+        Rectangle { width: 32px; }
+    }
+
+    Rectangle {
+        vertical-stretch: 1;
+        background: Theme.color-surface;
+        border-radius: 6px;
+        clip: true;
+
+        ListView {
+            for dep in LicenseState.deps: Rectangle {
+                height: 34px;
+
+                Rectangle {
+                    y: 33px;
+                    height: 1px;
+                    background: #222222;
+                }
+
+                HorizontalLayout {
+                    padding-left: Theme.space-md;
+                    padding-right: Theme.space-md;
+                    spacing: 0px;
+
+                    Text {
+                        text: dep.name;
+                        font-size: Theme.font-sm;
+                        color: #c8c8c8;
+                        min-width: 180px;
+                        horizontal-stretch: 0;
+                        vertical-alignment: center;
+                        overflow: elide;
+                    }
+                    Text {
+                        text: dep.version;
+                        font-size: Theme.font-sm;
+                        color: Theme.color-muted;
+                        min-width: 80px;
+                        horizontal-stretch: 0;
+                        vertical-alignment: center;
+                    }
+                    Text {
+                        text: dep.license;
+                        font-size: Theme.font-sm;
+                        color: Theme.color-muted;
+                        min-width: 200px;
+                        horizontal-stretch: 0;
+                        vertical-alignment: center;
+                        overflow: elide;
+                    }
+                    Text {
+                        text: dep.description;
+                        font-size: Theme.font-xs;
+                        color: Theme.color-subtle;
+                        horizontal-stretch: 1;
+                        vertical-alignment: center;
+                        overflow: elide;
+                    }
+                    if dep.repository != "": link-btn := TouchArea {
+                        width: 32px;
+                        mouse-cursor: pointer;
+                        clicked => { LicenseState.open-url(dep.repository); }
+
+                        IconDisplay {
+                            icon: IconSet.ExternalLink;
+                            size: 14px;
+                            stroke: link-btn.has-hover ? #4a9eff : Theme.color-subtle;
+                        }
+                    }
+                    if dep.repository == "": Rectangle { width: 32px; }
+                }
+            }
+        }
+    }
+}

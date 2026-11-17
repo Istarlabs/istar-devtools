@@ -1,0 +1,233 @@
+import { PageContainer } from "../components/page-container.slint";
+import { SeparatorLine } from "../components/separator-line.slint";
+import { CheckBox, LineEdit } from "std-widgets.slint";
+import { ChmodState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+export component ChmodNotation inherits PageContainer {
+    title-text: @tr("chmod Notation");
+    subtitle-text: @tr("Calculate numeric and symbolic notation values for chmod");
+
+    GridLayout {
+        spacing: Theme.space-lg;
+
+        Text {
+            col: 0;
+            text: @tr("Permission");
+            vertical-alignment: center;
+        }
+
+        GridLayout {
+            col: 1;
+            spacing: Theme.space-sm;
+
+            Row {
+                Text {
+                    text: "";
+                    width: 80px;
+                }
+
+                Text {
+                    text: @tr("Set UID");
+                    horizontal-alignment: center;
+                    width: 80px;
+                }
+
+                Text {
+                    text: @tr("Set GID");
+                    horizontal-alignment: center;
+                    width: 80px;
+                }
+
+                Text {
+                    text: @tr("Sticky");
+                    horizontal-alignment: center;
+                    width: 80px;
+                }
+            }
+
+            Row {
+                Text {
+                    text: @tr("Special");
+                    horizontal-alignment: center;
+                    width: 80px;
+                }
+
+                CheckBox {
+                    checked <=> ChmodState.set-uid-checked;
+                    toggled => {
+                        ChmodState.calculate();
+                    }
+                }
+
+                CheckBox {
+                    checked <=> ChmodState.set-gid-checked;
+                    toggled => {
+                        ChmodState.calculate();
+                    }
+                }
+
+                CheckBox {
+                    checked <=> ChmodState.set-sticy-checked;
+                    toggled => {
+                        ChmodState.calculate();
+                    }
+                }
+            }
+        }
+
+        GridLayout {
+            col: 2;
+            spacing: Theme.space-sm;
+
+            Row {
+                Text {
+                    text: "";
+                    width: 80px;
+                }
+
+                Text {
+                    text: @tr("Owner");
+                    horizontal-alignment: center;
+                    width: 80px;
+                }
+
+                Text {
+                    text: @tr("Group");
+                    horizontal-alignment: center;
+                    width: 80px;
+                }
+
+                Text {
+                    text: @tr("Other");
+                    horizontal-alignment: center;
+                    width: 80px;
+                }
+            }
+
+            Row {
+                Text {
+                    text: @tr("Read");
+                    horizontal-alignment: center;
+                    width: 80px;
+                }
+
+                CheckBox {
+                    checked <=> ChmodState.set-owner-read-checked;
+                    toggled => {
+                        ChmodState.calculate();
+                    }
+                }
+
+                CheckBox {
+                    checked <=> ChmodState.set-group-read-checked;
+                    toggled => {
+                        ChmodState.calculate();
+                    }
+                }
+
+                CheckBox {
+                    checked <=> ChmodState.set-other-read-checked;
+                    toggled => {
+                        ChmodState.calculate();
+                    }
+                }
+            }
+
+            Row {
+                Text {
+                    text: @tr("Write");
+                    horizontal-alignment: center;
+                    width: 80px;
+                }
+
+                CheckBox {
+                    checked <=> ChmodState.set-owner-write-checked;
+                    toggled => {
+                        ChmodState.calculate();
+                    }
+                }
+
+                CheckBox {
+                    checked <=> ChmodState.set-group-write-checked;
+                    toggled => {
+                        ChmodState.calculate();
+                    }
+                }
+
+                CheckBox {
+                    checked <=> ChmodState.set-other-write-checked;
+                    toggled => {
+                        ChmodState.calculate();
+                    }
+                }
+            }
+
+            Row {
+                Text {
+                    text: @tr("Execute");
+                    horizontal-alignment: center;
+                    width: 80px;
+                }
+
+                CheckBox {
+                    checked <=> ChmodState.set-owner-execute-checked;
+                    toggled => {
+                        ChmodState.calculate();
+                    }
+                }
+
+                CheckBox {
+                    checked <=> ChmodState.set-group-execute-checked;
+                    toggled => {
+                        ChmodState.calculate();
+                    }
+                }
+
+                CheckBox {
+                    checked <=> ChmodState.set-other-execute-checked;
+                    toggled => {
+                        ChmodState.calculate();
+                    }
+                }
+            }
+        }
+    }
+
+    SeparatorLine { }
+
+    HorizontalLayout {
+        spacing: Theme.space-xl;
+        alignment: start;
+
+        HorizontalLayout {
+            spacing: Theme.space-sm;
+            Text {
+                text: @tr("Numeric:");
+                vertical-alignment: center;
+                color: Theme.color-muted;
+                font-size: Theme.font-sm;
+            }
+
+            Text {
+                text: ChmodState.numeric-notation;
+                font-size: Theme.font-lg;
+            }
+        }
+
+        HorizontalLayout {
+            spacing: Theme.space-sm;
+            Text {
+                text: @tr("Symbolic:");
+                vertical-alignment: center;
+                color: Theme.color-muted;
+                font-size: Theme.font-sm;
+            }
+
+            Text {
+                text: ChmodState.symbolic-notation;
+                font-size: Theme.font-lg;
+            }
+        }
+    }
+}

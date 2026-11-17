@@ -1,0 +1,61 @@
+import { Button, ComboBox, LineEdit } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { ResultList } from "../components/result-list.slint";
+import { TimestampState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+export component TimestampPage inherits PageContainer {
+    title-text: @tr("Timestamp");
+    subtitle-text: @tr("Convert Unix timestamps and dates, in any time zone");
+
+    HorizontalLayout {
+        spacing: Theme.space-sm;
+
+        LineEdit {
+            text <=> TimestampState.input;
+            placeholder-text: @tr("Unix timestamp or date, e.g. 1700000000 or 2024-01-15 12:00:00");
+            horizontal-stretch: 1;
+            edited(_) => {
+                TimestampState.convert();
+            }
+        }
+
+        ComboBox {
+            model: ["UTC", @tr("Local"), "Europe/Berlin", "Europe/London", "Europe/Moscow", "America/New_York", "America/Chicago", "America/Los_Angeles", "Asia/Kolkata", "Asia/Shanghai", "Asia/Tokyo", "Australia/Sydney"];
+            current-index <=> TimestampState.zone-index;
+            selected(_) => {
+                TimestampState.convert();
+            }
+        }
+
+        Button {
+            text: @tr("Now");
+            primary: true;
+            clicked => {
+                TimestampState.now();
+            }
+        }
+    }
+
+    Text {
+        text: @tr("Numbers are read as Unix time (seconds, milliseconds, microseconds or nanoseconds, guessed by size). Dates without an offset are read in the selected zone.");
+        font-size: Theme.font-xs;
+        color: Theme.color-muted;
+        wrap: word-wrap;
+    }
+
+    if !TimestampState.error.is-empty: Text {
+        text: TimestampState.error;
+        font-size: Theme.font-sm;
+        color: #e05050;
+        wrap: word-wrap;
+    }
+
+    ResultList {
+        rows: TimestampState.rows;
+        vertical-stretch: 1;
+        copy-clicked(text) => {
+            TimestampState.copy(text);
+        }
+    }
+}

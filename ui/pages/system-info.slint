@@ -1,0 +1,141 @@
+import { PageContainer } from "../components/page-container.slint";
+import {
+    HorizontalBox,
+    VerticalBox,
+    Button,
+    ScrollView,
+} from "std-widgets.slint";
+import { SeparatorLine } from "../components/separator-line.slint";
+import { SystemInfoState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+component InfoRow inherits HorizontalLayout {
+    in property <string> label;
+    in property <string> value;
+    in property <bool> show-copy: false;
+    callback copy();
+
+    spacing: Theme.space-sm;
+    alignment: start;
+
+    if label != "": Text {
+        text: label + ":";
+        font-size: Theme.font-sm;
+        color: Theme.color-muted;
+        width: 160px;
+    }
+
+    Text {
+        text: value;
+        font-size: Theme.font-sm;
+        horizontal-stretch: 1;
+    }
+
+    if show-copy: Button {
+        text: @tr("Copy");
+        clicked => {
+            root.copy();
+        }
+    }
+}
+
+export component SystemInfoPage inherits PageContainer {
+    title-text: @tr("System Information");
+    subtitle-text: @tr("Overview of your system hardware and OS");
+
+    ScrollView {
+        vertical-stretch: 1;
+
+        VerticalLayout {
+            spacing: Theme.space-sm;
+            padding-bottom: Theme.space-lg;
+            width: parent.visible-width;
+
+            Text {
+                text: @tr("Operating System");
+                font-size: Theme.font-lg;
+            }
+
+            InfoRow {
+                label: @tr("Distribution");
+                value: SystemInfoState.os-name + " " + SystemInfoState.os-version;
+                show-copy: true;
+                copy => {
+                    SystemInfoState.copy-field(SystemInfoState.os-name + " " + SystemInfoState.os-version);
+                }
+            }
+
+            InfoRow {
+                label: @tr("Kernel");
+                value: SystemInfoState.kernel-version;
+                show-copy: true;
+                copy => {
+                    SystemInfoState.copy-field(SystemInfoState.kernel-version);
+                }
+            }
+
+            InfoRow {
+                label: @tr("Desktop Environment");
+                value: SystemInfoState.desktop-environment;
+                show-copy: true;
+                copy => {
+                    SystemInfoState.copy-field(SystemInfoState.desktop-environment);
+                }
+            }
+
+            SeparatorLine { }
+
+            Text {
+                text: @tr("Hardware");
+                font-size: Theme.font-lg;
+            }
+
+            InfoRow {
+                label: @tr("CPU");
+                value: SystemInfoState.cpu-name;
+                show-copy: true;
+                copy => {
+                    SystemInfoState.copy-field(SystemInfoState.cpu-name);
+                }
+            }
+
+            InfoRow {
+                label: @tr("GPU");
+                value: SystemInfoState.gpu-name;
+                show-copy: true;
+                copy => {
+                    SystemInfoState.copy-field(SystemInfoState.gpu-name);
+                }
+            }
+
+            InfoRow {
+                label: @tr("RAM");
+                value: SystemInfoState.ram-used + " " + @tr("used") + " / " + SystemInfoState.ram-total + " " + @tr("total");
+            }
+
+            SeparatorLine { }
+
+            Text {
+                text: @tr("Storage");
+                font-size: Theme.font-lg;
+            }
+
+            for disk in SystemInfoState.disks: InfoRow {
+                label: disk.mount;
+                value: disk.device + " — " + disk.used + " " + @tr("used") + " / " + disk.total + " " + @tr("total") + " (" + disk.free + " " + @tr("free") + ")";
+            }
+
+            SeparatorLine { }
+
+            HorizontalLayout {
+                alignment: start;
+                Button {
+                    text: @tr("Copy All");
+                    clicked => {
+                        SystemInfoState.copy-all();
+                    }
+                }
+            }
+        }
+    }
+}

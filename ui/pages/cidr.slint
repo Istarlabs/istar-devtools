@@ -1,0 +1,109 @@
+import { LineEdit } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { ResultList } from "../components/result-list.slint";
+import { CidrState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+component Labeled inherits VerticalLayout {
+    in property <string> label;
+    in-out property <string> value;
+    in property <string> placeholder;
+    callback edited();
+
+    spacing: Theme.space-xs;
+    horizontal-stretch: 1;
+
+    Text {
+        text: root.label;
+        font-size: Theme.font-xs;
+        color: Theme.color-subtle;
+    }
+
+    LineEdit {
+        text <=> root.value;
+        placeholder-text: root.placeholder;
+        font-size: Theme.font-sm;
+        edited(_) => {
+            root.edited();
+        }
+    }
+}
+
+export component CidrPage inherits PageContainer {
+    title-text: @tr("CIDR");
+    subtitle-text: @tr("IPv4 and IPv6 subnet calculator");
+
+    HorizontalLayout {
+        spacing: Theme.space-md;
+
+        Labeled {
+            label: @tr("Network (address/prefix or address netmask)");
+            placeholder: "192.168.1.130/26";
+            value <=> CidrState.network;
+            edited => {
+                CidrState.calculate();
+            }
+        }
+        Labeled {
+            label: @tr("Contains address?");
+            placeholder: "192.168.1.150";
+            value <=> CidrState.check-address;
+            edited => {
+                CidrState.calculate();
+            }
+        }
+        Labeled {
+            label: @tr("Split into prefix");
+            placeholder: "28";
+            value <=> CidrState.split-prefix;
+            edited => {
+                CidrState.calculate();
+            }
+        }
+    }
+
+    if !CidrState.error.is-empty: Text {
+        text: CidrState.error;
+        font-size: Theme.font-sm;
+        color: #e05050;
+        wrap: word-wrap;
+    }
+
+    if !CidrState.contains-result.is-empty: Text {
+        text: CidrState.contains-result;
+        font-size: Theme.font-md;
+        color: CidrState.contains-ok ? #4caf50 : #e05050;
+    }
+
+    HorizontalLayout {
+        spacing: Theme.space-md;
+        vertical-stretch: 1;
+
+        ResultList {
+            rows: CidrState.rows;
+            horizontal-stretch: 1;
+            copy-clicked(text) => {
+                CidrState.copy(text);
+            }
+        }
+
+        if CidrState.subnets.length > 0: VerticalLayout {
+            spacing: Theme.space-xs;
+            horizontal-stretch: 1;
+
+            Text {
+                text: CidrState.subnets-note;
+                font-size: Theme.font-sm;
+                color: Theme.color-muted;
+            }
+
+            ResultList {
+                rows: CidrState.subnets;
+                vertical-stretch: 1;
+                copy-clicked(text) => {
+                    CidrState.copy(text);
+                }
+            }
+        }
+    }
+}

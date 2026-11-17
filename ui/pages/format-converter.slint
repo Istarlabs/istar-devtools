@@ -1,0 +1,114 @@
+import { Button, ComboBox } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { AdvancedTextEdit } from "../components/advanced-text-edit.slint";
+import { FormatConverterState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+export component FormatConverterPage inherits PageContainer {
+    title-text: @tr("Converter");
+    subtitle-text: @tr("Convert between JSON, YAML, TOML, CSV and XML");
+
+    HorizontalLayout {
+        spacing: Theme.space-sm;
+
+        ComboBox {
+            model: ["JSON", "YAML", "TOML", "CSV", "XML"];
+            current-index <=> FormatConverterState.source-index;
+            selected(_) => {
+                FormatConverterState.convert();
+            }
+        }
+
+        Button {
+            text: "⇄";
+            clicked => {
+                FormatConverterState.swap();
+            }
+        }
+
+        ComboBox {
+            model: ["JSON", "YAML", "TOML", "CSV", "XML"];
+            current-index <=> FormatConverterState.target-index;
+            selected(_) => {
+                FormatConverterState.convert();
+            }
+        }
+
+        if FormatConverterState.source-index == 3 || FormatConverterState.target-index == 3: ComboBox {
+            model: [@tr("Comma"), @tr("Semicolon"), @tr("Tab")];
+            current-index <=> FormatConverterState.delimiter-index;
+            selected(_) => {
+                FormatConverterState.convert();
+            }
+        }
+
+        Rectangle { horizontal-stretch: 1; }
+
+        Button {
+            text: @tr("Paste");
+            clicked => {
+                FormatConverterState.paste-input();
+            }
+        }
+
+        Button {
+            text: @tr("Copy");
+            enabled: !FormatConverterState.output.is-empty;
+            clicked => {
+                FormatConverterState.copy-output();
+            }
+        }
+    }
+
+    HorizontalLayout {
+        spacing: Theme.space-md;
+        vertical-stretch: 1;
+
+        VerticalLayout {
+            spacing: Theme.space-xs;
+            horizontal-stretch: 1;
+
+            Text {
+                text: @tr("Input");
+                font-size: Theme.font-sm;
+                color: Theme.color-muted;
+            }
+
+            AdvancedTextEdit {
+                text <=> FormatConverterState.input;
+                font-family: "monospace";
+                font-size: Theme.font-sm;
+                vertical-stretch: 1;
+                edited(_) => {
+                    FormatConverterState.convert();
+                }
+            }
+        }
+
+        VerticalLayout {
+            spacing: Theme.space-xs;
+            horizontal-stretch: 1;
+
+            Text {
+                text: @tr("Output");
+                font-size: Theme.font-sm;
+                color: Theme.color-muted;
+            }
+
+            AdvancedTextEdit {
+                text: FormatConverterState.output;
+                read-only: true;
+                font-family: "monospace";
+                font-size: Theme.font-sm;
+                vertical-stretch: 1;
+            }
+        }
+    }
+
+    if !FormatConverterState.error.is-empty: Text {
+        text: FormatConverterState.error;
+        font-size: Theme.font-sm;
+        color: #e05050;
+        wrap: word-wrap;
+    }
+}

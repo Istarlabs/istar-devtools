@@ -1,0 +1,123 @@
+import { Button, ComboBox } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { AdvancedTextEdit } from "../components/advanced-text-edit.slint";
+import { EscapeState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+export component EscapePage inherits PageContainer {
+    title-text: @tr("Escape");
+    subtitle-text: @tr("Escape and unescape text for string literals and formats");
+
+    HorizontalLayout {
+        spacing: Theme.space-sm;
+
+        ComboBox {
+            model: ["C#", "C# verbatim", "JSON", "Rust", "JavaScript", "Regex", "SQL", "Shell", "HTML / XML", "CSV"];
+            current-index <=> EscapeState.target-index;
+            selected(_) => {
+                EscapeState.convert();
+            }
+        }
+
+        Button {
+            text: @tr("Escape");
+            primary: !EscapeState.unescape-mode;
+            clicked => {
+                EscapeState.unescape-mode = false;
+                EscapeState.convert();
+            }
+        }
+
+        Button {
+            text: @tr("Unescape");
+            primary: EscapeState.unescape-mode;
+            clicked => {
+                EscapeState.unescape-mode = true;
+                EscapeState.convert();
+            }
+        }
+
+        Button {
+            text: "⇄";
+            clicked => {
+                EscapeState.swap();
+            }
+        }
+
+        Rectangle { horizontal-stretch: 1; }
+
+        Button {
+            text: @tr("Paste");
+            clicked => {
+                EscapeState.paste-input();
+            }
+        }
+
+        Button {
+            text: @tr("Copy");
+            enabled: !EscapeState.output.is-empty;
+            clicked => {
+                EscapeState.copy-output();
+            }
+        }
+    }
+
+    Text {
+        text: @tr("The result is the text between the quotes; Shell and CSV include their own quoting. Surrounding double quotes are accepted when unescaping.");
+        font-size: Theme.font-xs;
+        color: Theme.color-muted;
+        wrap: word-wrap;
+    }
+
+    HorizontalLayout {
+        spacing: Theme.space-md;
+        vertical-stretch: 1;
+
+        VerticalLayout {
+            spacing: Theme.space-xs;
+            horizontal-stretch: 1;
+
+            Text {
+                text: @tr("Input");
+                font-size: Theme.font-sm;
+                color: Theme.color-muted;
+            }
+
+            AdvancedTextEdit {
+                text <=> EscapeState.input;
+                font-family: "monospace";
+                font-size: Theme.font-sm;
+                vertical-stretch: 1;
+                edited(_) => {
+                    EscapeState.convert();
+                }
+            }
+        }
+
+        VerticalLayout {
+            spacing: Theme.space-xs;
+            horizontal-stretch: 1;
+
+            Text {
+                text: @tr("Output");
+                font-size: Theme.font-sm;
+                color: Theme.color-muted;
+            }
+
+            AdvancedTextEdit {
+                text: EscapeState.output;
+                read-only: true;
+                font-family: "monospace";
+                font-size: Theme.font-sm;
+                vertical-stretch: 1;
+            }
+        }
+    }
+
+    if !EscapeState.error.is-empty: Text {
+        text: EscapeState.error;
+        font-size: Theme.font-sm;
+        color: #e05050;
+        wrap: word-wrap;
+    }
+}

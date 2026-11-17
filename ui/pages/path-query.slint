@@ -1,0 +1,92 @@
+import { Button, ComboBox, LineEdit } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { ResultList } from "../components/result-list.slint";
+import { AdvancedTextEdit } from "../components/advanced-text-edit.slint";
+import { PathQueryState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+export component PathQueryPage inherits PageContainer {
+    title-text: @tr("Path Query");
+    subtitle-text: @tr("Query JSON/YAML with JSONPath or XML with XPath");
+
+    HorizontalLayout {
+        spacing: Theme.space-sm;
+
+        ComboBox {
+            model: ["JSONPath", "XPath"];
+            current-index <=> PathQueryState.mode-index;
+            selected(_) => {
+                PathQueryState.run();
+            }
+        }
+
+        LineEdit {
+            text <=> PathQueryState.expression;
+            placeholder-text: PathQueryState.mode-index == 0 ? "$.store.book[?@.price > 10].title" : "//book[@id='2']/title/text()";
+            font-size: Theme.font-sm;
+            horizontal-stretch: 1;
+            edited(_) => {
+                PathQueryState.run();
+            }
+        }
+
+        Button {
+            text: @tr("Paste document");
+            clicked => {
+                PathQueryState.paste-document();
+            }
+        }
+    }
+
+    HorizontalLayout {
+        spacing: Theme.space-md;
+        vertical-stretch: 1;
+
+        VerticalLayout {
+            spacing: Theme.space-xs;
+            horizontal-stretch: 1;
+
+            Text {
+                text: PathQueryState.mode-index == 0 ? @tr("JSON / YAML document") : @tr("XML document");
+                font-size: Theme.font-sm;
+                color: Theme.color-muted;
+            }
+
+            AdvancedTextEdit {
+                text <=> PathQueryState.document;
+                font-family: "monospace";
+                font-size: Theme.font-sm;
+                vertical-stretch: 1;
+                edited(_) => {
+                    PathQueryState.run();
+                }
+            }
+        }
+
+        VerticalLayout {
+            spacing: Theme.space-xs;
+            horizontal-stretch: 1;
+
+            Text {
+                text: PathQueryState.summary.is-empty ? @tr("Matches") : PathQueryState.summary;
+                font-size: Theme.font-sm;
+                color: Theme.color-muted;
+            }
+
+            if !PathQueryState.error.is-empty: Text {
+                text: PathQueryState.error;
+                font-size: Theme.font-sm;
+                color: #e05050;
+                wrap: word-wrap;
+            }
+
+            ResultList {
+                rows: PathQueryState.rows;
+                vertical-stretch: 1;
+                copy-clicked(text) => {
+                    PathQueryState.copy(text);
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,863 @@
+import { LineEdit, ComboBox, Button, Slider } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { SeparatorLine } from "../components/separator-line.slint";
+import { VectorCalculatorState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+component VectorInputRow {
+    in property <string> label-text;
+    in property <color> label-color: Theme.color-muted;
+    in-out property <string> x-value;
+    in-out property <string> y-value;
+    in-out property <string> z-value;
+    callback changed();
+
+    VerticalLayout {
+        spacing: Theme.space-xs;
+
+        Text {
+            text: root.label-text;
+            font-size: Theme.font-sm;
+            color: root.label-color;
+        }
+
+        HorizontalLayout {
+            spacing: Theme.space-xs;
+
+            VerticalLayout {
+                horizontal-stretch: 1;
+                spacing: 2px;
+                Text {
+                    text: "X";
+                    font-size: Theme.font-xs;
+                    color: Theme.color-subtle;
+                }
+
+                LineEdit {
+                    text <=> root.x-value;
+                    placeholder-text: "0";
+                    min-width: 0;
+                    edited(_) => {
+                        root.changed();
+                    }
+                }
+            }
+
+            VerticalLayout {
+                horizontal-stretch: 1;
+                spacing: 2px;
+                Text {
+                    text: "Y";
+                    font-size: Theme.font-xs;
+                    color: Theme.color-subtle;
+                }
+
+                LineEdit {
+                    text <=> root.y-value;
+                    placeholder-text: "0";
+                    min-width: 0;
+                    edited(_) => {
+                        root.changed();
+                    }
+                }
+            }
+
+            VerticalLayout {
+                horizontal-stretch: 1;
+                spacing: 2px;
+                Text {
+                    text: "Z";
+                    font-size: Theme.font-xs;
+                    color: Theme.color-subtle;
+                }
+
+                LineEdit {
+                    text <=> root.z-value;
+                    placeholder-text: "0";
+                    min-width: 0;
+                    edited(_) => {
+                        root.changed();
+                    }
+                }
+            }
+        }
+    }
+}
+
+component ViewPlaneButton {
+    in property <string> label;
+    in property <bool> selected;
+    callback clicked();
+
+    min-width: 44px;
+    height: 28px;
+
+    bg := Rectangle {
+        border-radius: 4px;
+        background: root.selected ? #2d5a8e : #252525;
+
+        ta := TouchArea {
+            mouse-cursor: pointer;
+            clicked => {
+                root.clicked();
+            }
+        }
+
+        Text {
+            text: root.label;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+            color: root.selected ? #e0e0e0 : Theme.color-muted;
+            font-size: Theme.font-sm;
+        }
+    }
+
+    states [
+        hovered when ta.has-hover && !root.selected: {
+            bg.background: #353535;
+        }
+        pressed when ta.pressed: {
+            bg.background: #1a3a6e;
+        }
+    ]
+}
+
+component ResultRow {
+    in property <string> label;
+    in property <string> value;
+    in property <bool> visible-row: true;
+
+    if root.visible-row: HorizontalLayout {
+        spacing: Theme.space-sm;
+
+        Text {
+            text: root.label;
+            font-size: Theme.font-sm;
+            color: Theme.color-subtle;
+            horizontal-stretch: 0;
+            min-width: 90px;
+        }
+
+        Text {
+            text: root.value;
+            font-size: Theme.font-sm;
+            color: #e0e0e0;
+            overflow: elide;
+        }
+    }
+}
+
+export component VectorCalculatorPage inherits PageContainer {
+    title-text: @tr("Vector Calculator");
+    subtitle-text: @tr("2D/3D vector operations with canvas visualization");
+
+    HorizontalLayout {
+        spacing: Theme.space-xl;
+        vertical-stretch: 1;
+
+        // ── Left panel: inputs + results ────────────────────────────
+        VerticalLayout {
+            width: 300px;
+            spacing: Theme.space-md;
+
+            // Vector A
+            VectorInputRow {
+                label-text: @tr("Vector A");
+                label-color: #4a9eff;
+                x-value <=> VectorCalculatorState.vector-a.x;
+                y-value <=> VectorCalculatorState.vector-a.y;
+                z-value <=> VectorCalculatorState.vector-a.z;
+            }
+
+            // Vector B (hidden for ScaleA / NormalizeA)
+            if VectorCalculatorState.operation-index != 4 && VectorCalculatorState.operation-index != 5:
+            VectorInputRow {
+                label-text: VectorCalculatorState.operation-index == 8 ? @tr("Normal vector (B)") : @tr("Vector B");
+                label-color: #ff8c42;
+                x-value <=> VectorCalculatorState.vector-b.x;
+                y-value <=> VectorCalculatorState.vector-b.y;
+                z-value <=> VectorCalculatorState.vector-b.z;
+            }
+
+            // Scalar input (ScaleA only)
+            if VectorCalculatorState.operation-index == 4:
+            VerticalLayout {
+                spacing: Theme.space-xs;
+                Text {
+                    text: @tr("Scalar");
+                    font-size: Theme.font-sm;
+                    color: Theme.color-muted;
+                }
+
+                LineEdit {
+                    text <=> VectorCalculatorState.scalar-input;
+                    placeholder-text: "1";
+                }
+            }
+
+            // Lerp t slider
+            if VectorCalculatorState.operation-index == 9:
+            VerticalLayout {
+                spacing: Theme.space-xs;
+                HorizontalLayout {
+                    Text {
+                        text: @tr("t");
+                        font-size: Theme.font-sm;
+                        color: Theme.color-muted;
+                        horizontal-stretch: 0;
+                        min-width: 20px;
+                    }
+
+                    Text {
+                        text: VectorCalculatorState.lerp-t-display;
+                        font-size: Theme.font-sm;
+                        color: #e0e0e0;
+                        horizontal-alignment: right;
+                    }
+                }
+
+                Slider {
+                    value: VectorCalculatorState.lerp-t;
+                    minimum: 0.0;
+                    maximum: 1.0;
+                    changed(v) => {
+                        VectorCalculatorState.lerp-t = v;
+                        VectorCalculatorState.calculate();
+                    }
+                }
+            }
+
+            // Operation selector
+            VerticalLayout {
+                spacing: Theme.space-xs;
+                Text {
+                    text: @tr("Operation");
+                    font-size: Theme.font-sm;
+                    color: Theme.color-muted;
+                }
+
+                ComboBox {
+                    model: [
+                        @tr("Add (A + B)"),
+                        @tr("Subtract (A − B)"),
+                        @tr("Dot Product (A · B)"),
+                        @tr("Cross Product (A × B)"),
+                        @tr("Scale A"),
+                        @tr("Normalize A"),
+                        @tr("Angle"),
+                        @tr("Distance"),
+                        @tr("Reflect (A off normal B)"),
+                        @tr("Lerp"),
+                    ];
+                    current-index <=> VectorCalculatorState.operation-index;
+                    selected(_) => {
+                        VectorCalculatorState.calculate();
+                    }
+                }
+            }
+
+            // Action buttons
+            HorizontalLayout {
+                spacing: Theme.space-sm;
+                Button {
+                    text: @tr("Calculate");
+                    primary: true;
+                    horizontal-stretch: 1;
+                    clicked => {
+                        VectorCalculatorState.calculate();
+                    }
+                }
+
+                Button {
+                    text: "⇄";
+                    horizontal-stretch: 0;
+                    clicked => {
+                        VectorCalculatorState.swap-vectors();
+                    }
+                }
+
+                Button {
+                    text: @tr("Copy");
+                    horizontal-stretch: 0;
+                    clicked => {
+                        VectorCalculatorState.copy-result();
+                    }
+                }
+            }
+
+            SeparatorLine { }
+
+            // ── Result panel ──
+            VerticalLayout {
+                spacing: Theme.space-sm;
+
+                if !VectorCalculatorState.result.is-valid:
+                Rectangle {
+                    background: #3a1a1a;
+                    border-radius: 4px;
+                    height: 36px;
+                    HorizontalLayout {
+                        padding: Theme.space-sm;
+                        Text {
+                            text: VectorCalculatorState.result.error;
+                            color: #e05050;
+                            font-size: Theme.font-sm;
+                            vertical-alignment: center;
+                            overflow: elide;
+                        }
+                    }
+                }
+
+                if VectorCalculatorState.result.is-valid && VectorCalculatorState.shows-result-vector:
+                VerticalLayout {
+                    spacing: 3px;
+                    Text {
+                        text: @tr("Result");
+                        font-size: Theme.font-xs;
+                        color: Theme.color-subtle;
+                    }
+
+                    HorizontalLayout {
+                        spacing: Theme.space-md;
+                        VerticalLayout {
+                            Text {
+                                text: "X";
+                                font-size: Theme.font-xs;
+                                color: #555;
+                            }
+
+                            Text {
+                                text: VectorCalculatorState.result.x;
+                                font-size: Theme.font-sm;
+                                color: #50c878;
+                            }
+                        }
+
+                        VerticalLayout {
+                            Text {
+                                text: "Y";
+                                font-size: Theme.font-xs;
+                                color: #555;
+                            }
+
+                            Text {
+                                text: VectorCalculatorState.result.y;
+                                font-size: Theme.font-sm;
+                                color: #50c878;
+                            }
+                        }
+
+                        VerticalLayout {
+                            Text {
+                                text: "Z";
+                                font-size: Theme.font-xs;
+                                color: #555;
+                            }
+
+                            Text {
+                                text: VectorCalculatorState.result.z;
+                                font-size: Theme.font-sm;
+                                color: #50c878;
+                            }
+                        }
+                    }
+                }
+
+                if VectorCalculatorState.result.is-valid && !VectorCalculatorState.shows-result-vector:
+                VerticalLayout {
+                    spacing: 3px;
+                    Text {
+                        text: @tr("Result");
+                        font-size: Theme.font-xs;
+                        color: Theme.color-subtle;
+                    }
+
+                    Text {
+                        text: VectorCalculatorState.result.scalar-result;
+                        font-size: Theme.font-lg;
+                        color: #50c878;
+                    }
+                }
+
+                if VectorCalculatorState.result.is-valid:
+                VerticalLayout {
+                    spacing: 3px;
+                    ResultRow {
+                        label: @tr("Length:");
+                        value: VectorCalculatorState.result.length;
+                        visible-row: VectorCalculatorState.shows-result-vector;
+                    }
+
+                    ResultRow {
+                        label: @tr("Dot A·B:");
+                        value: VectorCalculatorState.result.dot;
+                        visible-row: VectorCalculatorState.operation-index != 4 && VectorCalculatorState.operation-index != 5;
+                    }
+
+                    ResultRow {
+                        label: @tr("Angle A,B:");
+                        value: VectorCalculatorState.result.angle-deg;
+                        visible-row: VectorCalculatorState.operation-index != 4 && VectorCalculatorState.operation-index != 5;
+                    }
+
+                    ResultRow {
+                        label: @tr("Normalized A:");
+                        value: VectorCalculatorState.result.normalized;
+                    }
+                }
+            }
+        }
+
+        // ── Right panel: canvas ──────────────────────────────────────
+        VerticalLayout {
+            spacing: Theme.space-md;
+            horizontal-stretch: 1;
+            alignment: start;
+
+            // Canvas
+            canvas-rect := Rectangle {
+                width: 450px;
+                height: 400px;
+                background: #141414;
+                border-radius: 8px;
+                clip: true;
+
+                // Grid: vertical lines at 1/4, 1/2, 3/4
+                Rectangle {
+                    x: 112px;
+                    y: 0;
+                    width: 1px;
+                    height: 400px;
+                    background: #1e1e1e;
+                }
+
+                Rectangle {
+                    x: 225px;
+                    y: 0;
+                    width: 1px;
+                    height: 400px;
+                    background: #2a2a2a;
+                }
+
+                Rectangle {
+                    x: 337px;
+                    y: 0;
+                    width: 1px;
+                    height: 400px;
+                    background: #1e1e1e;
+                }
+                // Grid: horizontal lines
+                Rectangle {
+                    x: 0;
+                    y: 100px;
+                    width: 450px;
+                    height: 1px;
+                    background: #1e1e1e;
+                }
+
+                Rectangle {
+                    x: 0;
+                    y: 200px;
+                    width: 450px;
+                    height: 1px;
+                    background: #2a2a2a;
+                }
+
+                Rectangle {
+                    x: 0;
+                    y: 300px;
+                    width: 450px;
+                    height: 1px;
+                    background: #1e1e1e;
+                }
+
+                // Axis arrows
+                // X axis
+                Path {
+                    x: 0;
+                    y: 0;
+                    width: 450px;
+                    height: 400px;
+                    stroke: #3a3a3a;
+                    stroke-width: 1.5px;
+                    fill: transparent;
+                    MoveTo {
+                        x: 10;
+                        y: 200;
+                    }
+
+                    LineTo {
+                        x: 440;
+                        y: 200;
+                    }
+                }
+                // X axis arrowhead
+                Path {
+                    x: 0;
+                    y: 0;
+                    width: 450px;
+                    height: 400px;
+                    fill: #3a3a3a;
+                    stroke-width: 0;
+                    MoveTo {
+                        x: 445;
+                        y: 200;
+                    }
+
+                    LineTo {
+                        x: 437;
+                        y: 196;
+                    }
+
+                    LineTo {
+                        x: 437;
+                        y: 204;
+                    }
+
+                    Close { }
+                }
+                // Y axis
+                Path {
+                    x: 0;
+                    y: 0;
+                    width: 450px;
+                    height: 400px;
+                    stroke: #3a3a3a;
+                    stroke-width: 1.5px;
+                    fill: transparent;
+                    MoveTo {
+                        x: 225;
+                        y: 390;
+                    }
+
+                    LineTo {
+                        x: 225;
+                        y: 10;
+                    }
+                }
+                // Y axis arrowhead
+                Path {
+                    x: 0;
+                    y: 0;
+                    width: 450px;
+                    height: 400px;
+                    fill: #3a3a3a;
+                    stroke-width: 0;
+                    MoveTo {
+                        x: 225;
+                        y: 5;
+                    }
+
+                    LineTo {
+                        x: 221;
+                        y: 13;
+                    }
+
+                    LineTo {
+                        x: 229;
+                        y: 13;
+                    }
+
+                    Close { }
+                }
+                // Axis labels
+                Text {
+                    x: 432px;
+                    y: 204px;
+                    text: "x";
+                    color: #444;
+                    font-size: Theme.font-xs;
+                }
+
+                Text {
+                    x: 228px;
+                    y: 2px;
+                    text: "y";
+                    color: #444;
+                    font-size: Theme.font-xs;
+                }
+
+                // ── Add parallelogram ghost lines ──
+                if VectorCalculatorState.operation-index == 0 && VectorCalculatorState.result.is-valid:
+                Path {
+                    x: 0;
+                    y: 0;
+                    width: 450px;
+                    height: 400px;
+                    stroke: #444444;
+                    stroke-width: 1px;
+                    fill: transparent;
+                    MoveTo {
+                        x: VectorCalculatorState.canvas-points[0];
+                        y: VectorCalculatorState.canvas-points[1];
+                    }
+
+                    LineTo {
+                        x: VectorCalculatorState.canvas-points[12];
+                        y: VectorCalculatorState.canvas-points[13];
+                    }
+                }
+                if VectorCalculatorState.operation-index == 0 && VectorCalculatorState.result.is-valid:
+                Path {
+                    x: 0;
+                    y: 0;
+                    width: 450px;
+                    height: 400px;
+                    stroke: #444444;
+                    stroke-width: 1px;
+                    fill: transparent;
+                    MoveTo {
+                        x: VectorCalculatorState.canvas-points[6];
+                        y: VectorCalculatorState.canvas-points[7];
+                    }
+
+                    LineTo {
+                        x: VectorCalculatorState.canvas-points[12];
+                        y: VectorCalculatorState.canvas-points[13];
+                    }
+                }
+
+                // ── Lerp: line from A to B + dot at lerp point ──
+                if VectorCalculatorState.operation-index == 9 && VectorCalculatorState.result.is-valid:
+                Path {
+                    x: 0;
+                    y: 0;
+                    width: 450px;
+                    height: 400px;
+                    stroke: #38654a;
+                    stroke-width: 1px;
+                    fill: transparent;
+                    MoveTo {
+                        x: VectorCalculatorState.canvas-points[0];
+                        y: VectorCalculatorState.canvas-points[1];
+                    }
+
+                    LineTo {
+                        x: VectorCalculatorState.canvas-points[6];
+                        y: VectorCalculatorState.canvas-points[7];
+                    }
+                }
+                if VectorCalculatorState.operation-index == 9 && VectorCalculatorState.result.is-valid:
+                Rectangle {
+                    x: VectorCalculatorState.canvas-points[18] * 1px - 5px;
+                    y: VectorCalculatorState.canvas-points[19] * 1px - 5px;
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 5px;
+                    background: #50c878;
+                }
+
+                // ── Vector B arrow (orange) ──
+                if VectorCalculatorState.operation-index != 4 && VectorCalculatorState.operation-index != 5:
+                Path {
+                    x: 0;
+                    y: 0;
+                    width: 450px;
+                    height: 400px;
+                    stroke: #ff8c42;
+                    stroke-width: 2px;
+                    fill: transparent;
+                    MoveTo {
+                        x: 225;
+                        y: 200;
+                    }
+
+                    LineTo {
+                        x: VectorCalculatorState.canvas-points[6];
+                        y: VectorCalculatorState.canvas-points[7];
+                    }
+                }
+                if VectorCalculatorState.operation-index != 4 && VectorCalculatorState.operation-index != 5:
+                Path {
+                    x: 0;
+                    y: 0;
+                    width: 450px;
+                    height: 400px;
+                    fill: #ff8c42;
+                    stroke-width: 0;
+                    MoveTo {
+                        x: VectorCalculatorState.canvas-points[6];
+                        y: VectorCalculatorState.canvas-points[7];
+                    }
+
+                    LineTo {
+                        x: VectorCalculatorState.canvas-points[8];
+                        y: VectorCalculatorState.canvas-points[9];
+                    }
+
+                    LineTo {
+                        x: VectorCalculatorState.canvas-points[10];
+                        y: VectorCalculatorState.canvas-points[11];
+                    }
+
+                    Close { }
+                }
+
+                // ── Result arrow (green) ──
+                if VectorCalculatorState.shows-result-vector:
+                Path {
+                    x: 0;
+                    y: 0;
+                    width: 450px;
+                    height: 400px;
+                    stroke: #50c878;
+                    stroke-width: 2px;
+                    fill: transparent;
+                    MoveTo {
+                        x: 225;
+                        y: 200;
+                    }
+
+                    LineTo {
+                        x: VectorCalculatorState.canvas-points[12];
+                        y: VectorCalculatorState.canvas-points[13];
+                    }
+                }
+                if VectorCalculatorState.shows-result-vector:
+                Path {
+                    x: 0;
+                    y: 0;
+                    width: 450px;
+                    height: 400px;
+                    fill: #50c878;
+                    stroke-width: 0;
+                    MoveTo {
+                        x: VectorCalculatorState.canvas-points[12];
+                        y: VectorCalculatorState.canvas-points[13];
+                    }
+
+                    LineTo {
+                        x: VectorCalculatorState.canvas-points[14];
+                        y: VectorCalculatorState.canvas-points[15];
+                    }
+
+                    LineTo {
+                        x: VectorCalculatorState.canvas-points[16];
+                        y: VectorCalculatorState.canvas-points[17];
+                    }
+
+                    Close { }
+                }
+
+                // ── Vector A arrow (blue) — drawn on top ──
+                Path {
+                    x: 0;
+                    y: 0;
+                    width: 450px;
+                    height: 400px;
+                    stroke: #4a9eff;
+                    stroke-width: 2.5px;
+                    fill: transparent;
+                    MoveTo {
+                        x: 225;
+                        y: 200;
+                    }
+
+                    LineTo {
+                        x: VectorCalculatorState.canvas-points[0];
+                        y: VectorCalculatorState.canvas-points[1];
+                    }
+                }
+
+                Path {
+                    x: 0;
+                    y: 0;
+                    width: 450px;
+                    height: 400px;
+                    fill: #4a9eff;
+                    stroke-width: 0;
+                    MoveTo {
+                        x: VectorCalculatorState.canvas-points[0];
+                        y: VectorCalculatorState.canvas-points[1];
+                    }
+
+                    LineTo {
+                        x: VectorCalculatorState.canvas-points[2];
+                        y: VectorCalculatorState.canvas-points[3];
+                    }
+
+                    LineTo {
+                        x: VectorCalculatorState.canvas-points[4];
+                        y: VectorCalculatorState.canvas-points[5];
+                    }
+
+                    Close { }
+                }
+
+                // ── Labels ──
+                Text {
+                    x: VectorCalculatorState.canvas-points[0] * 1px + 7px;
+                    y: VectorCalculatorState.canvas-points[1] * 1px - 18px;
+                    text: "A";
+                    color: #4a9eff;
+                    font-size: Theme.font-sm;
+                    font-weight: 600;
+                }
+
+                if VectorCalculatorState.operation-index != 4 && VectorCalculatorState.operation-index != 5:
+                Text {
+                    x: VectorCalculatorState.canvas-points[6] * 1px + 7px;
+                    y: VectorCalculatorState.canvas-points[7] * 1px - 18px;
+                    text: "B";
+                    color: #ff8c42;
+                    font-size: Theme.font-sm;
+                    font-weight: 600;
+                }
+                if VectorCalculatorState.shows-result-vector:
+                Text {
+                    x: VectorCalculatorState.canvas-points[12] * 1px + 7px;
+                    y: VectorCalculatorState.canvas-points[13] * 1px - 18px;
+                    text: "R";
+                    color: #50c878;
+                    font-size: Theme.font-sm;
+                    font-weight: 600;
+                }
+            }
+
+            // View plane selector
+            HorizontalLayout {
+                spacing: Theme.space-sm;
+                alignment: start;
+
+                Text {
+                    text: @tr("View:");
+                    font-size: Theme.font-sm;
+                    color: Theme.color-muted;
+                    vertical-alignment: center;
+                }
+
+                ViewPlaneButton {
+                    label: "XY";
+                    selected: VectorCalculatorState.view-plane-index == 0;
+                    clicked => {
+                        VectorCalculatorState.view-plane-changed(0);
+                    }
+                }
+
+                ViewPlaneButton {
+                    label: "XZ";
+                    selected: VectorCalculatorState.view-plane-index == 1;
+                    clicked => {
+                        VectorCalculatorState.view-plane-changed(1);
+                    }
+                }
+
+                ViewPlaneButton {
+                    label: "YZ";
+                    selected: VectorCalculatorState.view-plane-index == 2;
+                    clicked => {
+                        VectorCalculatorState.view-plane-changed(2);
+                    }
+                }
+
+                ViewPlaneButton {
+                    label: "3D";
+                    selected: VectorCalculatorState.view-plane-index == 3;
+                    clicked => {
+                        VectorCalculatorState.view-plane-changed(3);
+                    }
+                }
+            }
+        }
+    }
+}

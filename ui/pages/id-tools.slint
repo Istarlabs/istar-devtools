@@ -1,0 +1,219 @@
+import { Button, ComboBox, LineEdit } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { ResultList } from "../components/result-list.slint";
+import { IdToolsState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+component Labeled inherits VerticalLayout {
+    in property <string> label;
+    in-out property <string> value;
+    in property <string> placeholder;
+    in property <length> field-width: 110px;
+    callback edited();
+
+    spacing: Theme.space-xs;
+
+    Text {
+        text: root.label;
+        font-size: Theme.font-xs;
+        color: Theme.color-subtle;
+    }
+
+    LineEdit {
+        text <=> root.value;
+        placeholder-text: root.placeholder;
+        font-size: Theme.font-sm;
+        width: root.field-width;
+        edited(_) => {
+            root.edited();
+        }
+    }
+}
+
+export component IdToolsPage inherits PageContainer {
+    title-text: @tr("ULID / NanoID");
+    subtitle-text: @tr("Generate and decode ULIDs, NanoIDs and Snowflake IDs");
+
+    HorizontalLayout {
+        spacing: Theme.space-sm;
+        alignment: start;
+
+        Button {
+            text: "ULID";
+            primary: IdToolsState.mode-index == 0;
+            clicked => {
+                IdToolsState.mode-index = 0;
+                IdToolsState.rows = [];
+                IdToolsState.decoded = [];
+                IdToolsState.error = "";
+            }
+        }
+        Button {
+            text: "NanoID";
+            primary: IdToolsState.mode-index == 1;
+            clicked => {
+                IdToolsState.mode-index = 1;
+                IdToolsState.rows = [];
+                IdToolsState.decoded = [];
+                IdToolsState.error = "";
+            }
+        }
+        Button {
+            text: "Snowflake";
+            primary: IdToolsState.mode-index == 2;
+            clicked => {
+                IdToolsState.mode-index = 2;
+                IdToolsState.rows = [];
+                IdToolsState.decoded = [];
+                IdToolsState.error = "";
+            }
+        }
+    }
+
+    if IdToolsState.mode-index == 0: HorizontalLayout {
+        spacing: Theme.space-md;
+
+        Labeled {
+            label: @tr("Count");
+            value <=> IdToolsState.count;
+            field-width: 70px;
+        }
+        Button {
+            text: @tr("Generate");
+            primary: true;
+            clicked => {
+                IdToolsState.generate();
+            }
+        }
+        Labeled {
+            label: @tr("Decode a ULID");
+            placeholder: "01ARZ3NDEKTSV4RRFFQ69G5FAV";
+            value <=> IdToolsState.ulid-input;
+            field-width: 300px;
+            edited => {
+                IdToolsState.decode();
+            }
+        }
+    }
+
+    if IdToolsState.mode-index == 1: HorizontalLayout {
+        spacing: Theme.space-md;
+
+        Labeled {
+            label: @tr("Length");
+            value <=> IdToolsState.nanoid-length;
+            field-width: 70px;
+        }
+        Labeled {
+            label: @tr("Count");
+            value <=> IdToolsState.count;
+            field-width: 70px;
+        }
+        VerticalLayout {
+            spacing: Theme.space-xs;
+            Text {
+                text: @tr("Alphabet");
+                font-size: Theme.font-xs;
+                color: Theme.color-subtle;
+            }
+            ComboBox {
+                model: [@tr("URL-safe (A-Za-z0-9_-)"), @tr("Alphanumeric"), @tr("Lowercase"), @tr("Digits"), "Hex", @tr("Custom")];
+                current-index <=> IdToolsState.nanoid-alphabet-index;
+            }
+        }
+        if IdToolsState.nanoid-alphabet-index == 5: Labeled {
+            label: @tr("Custom alphabet");
+            value <=> IdToolsState.nanoid-custom;
+            field-width: 220px;
+        }
+        Button {
+            text: @tr("Generate");
+            primary: true;
+            clicked => {
+                IdToolsState.generate();
+            }
+        }
+    }
+
+    if IdToolsState.mode-index == 2: HorizontalLayout {
+        spacing: Theme.space-md;
+
+        Labeled {
+            label: @tr("Snowflake ID");
+            placeholder: "175928847299117063";
+            value <=> IdToolsState.snowflake-input;
+            field-width: 220px;
+            edited => {
+                IdToolsState.decode();
+            }
+        }
+        VerticalLayout {
+            spacing: Theme.space-xs;
+            Text {
+                text: @tr("Epoch");
+                font-size: Theme.font-xs;
+                color: Theme.color-subtle;
+            }
+            ComboBox {
+                model: ["Twitter / X", "Discord", "Unix (0)", @tr("Custom (ms)")];
+                current-index <=> IdToolsState.snowflake-epoch-index;
+                selected(_) => {
+                    IdToolsState.decode();
+                }
+            }
+        }
+        if IdToolsState.snowflake-epoch-index == 3: Labeled {
+            label: @tr("Epoch in ms");
+            value <=> IdToolsState.snowflake-custom-epoch;
+            edited => {
+                IdToolsState.decode();
+            }
+        }
+        Labeled {
+            label: @tr("ID for time (UTC, empty = now)");
+            placeholder: "2024-01-15 12:00:00";
+            value <=> IdToolsState.snowflake-time;
+            field-width: 200px;
+        }
+        Button {
+            text: @tr("Create");
+            clicked => {
+                IdToolsState.snowflake-from-time();
+            }
+        }
+    }
+
+    if !IdToolsState.error.is-empty: Text {
+        text: IdToolsState.error;
+        font-size: Theme.font-sm;
+        color: #e05050;
+        wrap: word-wrap;
+    }
+
+    if !IdToolsState.note.is-empty: Text {
+        text: IdToolsState.note;
+        font-size: Theme.font-sm;
+        color: Theme.color-muted;
+    }
+
+    HorizontalLayout {
+        spacing: Theme.space-md;
+        vertical-stretch: 1;
+
+        if IdToolsState.rows.length > 0: ResultList {
+            rows: IdToolsState.rows;
+            horizontal-stretch: 1;
+            copy-clicked(text) => {
+                IdToolsState.copy(text);
+            }
+        }
+
+        if IdToolsState.decoded.length > 0: ResultList {
+            rows: IdToolsState.decoded;
+            horizontal-stretch: 1;
+            copy-clicked(text) => {
+                IdToolsState.copy(text);
+            }
+        }
+    }
+}

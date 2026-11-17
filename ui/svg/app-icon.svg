@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <rect width="128" height="128" rx="26" fill="#1e1e2e"/>
+  <rect x="2" y="2" width="124" height="124" rx="25" fill="none" stroke="#45475a" stroke-width="2"/>
+  <!-- wrench -->
+  <g stroke="#89b4fa" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M82 46a17 17 0 0 1-22 22L40 88a10 10 0 0 0 14 14l20-20a17 17 0 0 1 22-22l-12 12-12-4-4-12 12-10z"
+          fill="#89b4fa" stroke="none"/>
+  </g>
+  <!-- code brackets -->
+  <g stroke="#a6e3a1" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M44 30 L30 44 L44 58"/>
+    <path d="M84 30 L98 44 L84 58"/>
+  </g>
+</svg>

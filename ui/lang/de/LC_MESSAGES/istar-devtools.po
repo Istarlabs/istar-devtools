@@ -1,0 +1,729 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: de\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# Navigation
+msgid "Get Started"
+msgstr "Start"
+
+msgid "Text Inspector"
+msgstr "Textinspektor"
+
+msgid "Hash Generator"
+msgstr "Hash-Generator"
+
+msgid "Chmod-Notation"
+msgstr "Chmod-Notation"
+
+msgid "System Info"
+msgstr "Systeminfo"
+
+msgid "Number Base"
+msgstr "Zahlenbasis"
+
+msgid "Unit Converter"
+msgstr "Einheitenrechner"
+
+msgid "Settings"
+msgstr "Einstellungen"
+
+# Common buttons
+msgid "Open File"
+msgstr "Datei öffnen"
+
+msgid "Paste"
+msgstr "Einfügen"
+
+msgid "Clear"
+msgstr "Leeren"
+
+msgid "Copy"
+msgstr "Kopieren"
+
+msgid "Copy All"
+msgstr "Alles kopieren"
+
+msgid "Edit"
+msgstr "Bearbeiten"
+
+msgid "Delete"
+msgstr "Löschen"
+
+# Common labels
+msgid "Encoding"
+msgstr "Kodierung"
+
+msgid "Decoding"
+msgstr "Dekodierung"
+
+msgid "URL Safe"
+msgstr "URL-sicher"
+
+msgid "Enter value..."
+msgstr "Wert eingeben..."
+
+msgid "Result"
+msgstr "Ergebnis"
+
+# Base64
+msgid "Base64 Encoder & Decoder"
+msgstr "Base64-Kodierer & -Dekodierer"
+
+msgid "Encode and decode strings using the Base64 format"
+msgstr "Strings mit dem Base64-Format kodieren und dekodieren"
+
+# Text Inspector
+msgid "Text Inspector and Case Converter"
+msgstr "Textinspektor und Groß-/Kleinschreibungskonverter"
+
+msgid "Shows text statistics and change sentence case"
+msgstr "Zeigt Textstatistiken und ändert die Schreibweise"
+
+msgid "Change case"
+msgstr "Schreibweise ändern"
+
+msgid "Line: "
+msgstr "Zeile: "
+
+msgid "Row: "
+msgstr "Spalte: "
+
+msgid "Characters: "
+msgstr "Zeichen: "
+
+msgid "Words: "
+msgstr "Wörter: "
+
+msgid "Lines: "
+msgstr "Zeilen: "
+
+msgid "Sentence case"
+msgstr "Satzschreibweise"
+
+msgid "lower case"
+msgstr "kleinschreibung"
+
+msgid "UPPER CASE"
+msgstr "GROẞSCHREIBUNG"
+
+msgid "Title Case"
+msgstr "Titelschreibweise"
+
+msgid "Reverse"
+msgstr "Umkehren"
+
+# Hash Generator
+msgid "Calculate and verify hashes for MD5, SHA1, SHA256, SHA512 and more"
+msgstr "Hashes für MD5, SHA1, SHA256, SHA512 und mehr berechnen und überprüfen"
+
+msgid "Algorithm"
+msgstr "Algorithmus"
+
+# Chmod
+msgid "chmod Notation"
+msgstr "chmod-Notation"
+
+msgid "Calculate numeric and symbolic notation values for chmod"
+msgstr "Numerische und symbolische Notationswerte für chmod berechnen"
+
+msgid "Permission"
+msgstr "Berechtigung"
+
+msgid "Set UID"
+msgstr "SUID setzen"
+
+msgid "Set GID"
+msgstr "SGID setzen"
+
+msgid "Special"
+msgstr "Spezial"
+
+msgid "Owner"
+msgstr "Besitzer"
+
+msgid "Group"
+msgstr "Gruppe"
+
+msgid "Other"
+msgstr "Andere"
+
+msgid "Read"
+msgstr "Lesen"
+
+msgid "Write"
+msgstr "Schreiben"
+
+msgid "Execute"
+msgstr "Ausführen"
+
+msgid "Numeric:"
+msgstr "Numerisch:"
+
+msgid "Symbolic:"
+msgstr "Symbolisch:"
+
+# HTML
+msgid "HTML Encode & Decode"
+msgstr "HTML Kodieren & Dekodieren"
+
+msgid "Encode and decode HTML entities"
+msgstr "HTML-Entitäten kodieren und dekodieren"
+
+# System Info
+msgid "System Information"
+msgstr "Systeminformationen"
+
+msgid "Overview of your system hardware and OS"
+msgstr "Übersicht über Hardware und Betriebssystem"
+
+msgid "Operating System"
+msgstr "Betriebssystem"
+
+msgid "Desktop Environment"
+msgstr "Desktopumgebung"
+
+msgid "Storage"
+msgstr "Speicher"
+
+msgid "used"
+msgstr "verwendet"
+
+msgid "total"
+msgstr "gesamt"
+
+msgid "free"
+msgstr "frei"
+
+# Number Base
+msgid "Number Base Converter"
+msgstr "Zahlenbasis-Konverter"
+
+msgid "Converts numbers into different number bases or ASCII/UTF-8 characters"
+msgstr "Zahlen in verschiedene Zahlensysteme oder ASCII/UTF-8-Zeichen umwandeln"
+
+msgid "Decimal"
+msgstr "Dezimal"
+
+msgid "Binary"
+msgstr "Binär"
+
+msgid "Octal"
+msgstr "Oktal"
+
+msgid "Hexadecimal"
+msgstr "Hexadezimal"
+
+# Unit Converter
+msgid "Convert values between different units of measurement"
+msgstr "Werte zwischen verschiedenen Maßeinheiten umrechnen"
+
+msgid "Category:"
+msgstr "Kategorie:"
+
+msgid "Length"
+msgstr "Länge"
+
+msgid "Mass"
+msgstr "Masse"
+
+msgid "Temperature"
+msgstr "Temperatur"
+
+msgid "Speed"
+msgstr "Geschwindigkeit"
+
+msgid "Area"
+msgstr "Fläche"
+
+msgid "Volume"
+msgstr "Volumen"
+
+msgid "Time"
+msgstr "Zeit"
+
+msgid "From"
+msgstr "Von"
+
+msgid "To"
+msgstr "Nach"
+
+# Settings
+msgid "Customize application settings"
+msgstr "Anwendungseinstellungen anpassen"
+
+msgid "Language"
+msgstr "Sprache"
+
+# Navigation (additional items)
+msgid "Base64"
+msgstr "Base64"
+
+msgid "HTML"
+msgstr "HTML"
+
+msgid "Info"
+msgstr "Info"
+
+msgid "Calculator"
+msgstr "Rechner"
+
+msgid "Vector Calc"
+msgstr "Vektorrechner"
+
+msgid "Lorem Ipsum"
+msgstr "Lorem Ipsum"
+
+msgid "UUID"
+msgstr "UUID"
+
+msgid "Random"
+msgstr "Zufall"
+
+msgid "Regex"
+msgstr "Regex"
+
+msgid "Text Diff"
+msgstr "Textvergleich"
+
+msgid "CRON"
+msgstr "CRON"
+
+msgid "QR Code"
+msgstr "QR-Code"
+
+# Number Base (additional)
+msgid "ASCII"
+msgstr "ASCII"
+
+msgid "UTF-8"
+msgstr "UTF-8"
+
+# Unit Converter (additional)
+msgid "Byte / Data Size"
+msgstr "Byte / Datengröße"
+
+msgid "Convert between decimal (SI) and binary (IEC) units"
+msgstr "Zwischen dezimalen (SI) und binären (IEC) Einheiten umrechnen"
+
+# System Info (additional)
+msgid "Distribution"
+msgstr "Distribution"
+
+msgid "Hardware"
+msgstr "Hardware"
+
+msgid "CPU"
+msgstr "CPU"
+
+msgid "RAM"
+msgstr "RAM"
+
+msgid "GPU"
+msgstr "GPU"
+
+msgid "Kernel"
+msgstr "Kernel"
+
+# Chmod (additional)
+msgid "Sticky"
+msgstr "Sticky"
+
+# Info / About
+msgid "About"
+msgstr "Über"
+
+msgid "Developer toolbox built with Rust and Slint"
+msgstr "Entwicklerwerkzeugkasten, gebaut mit Rust und Slint"
+
+msgid "License"
+msgstr "Lizenz"
+
+msgid "Third-Party Dependencies"
+msgstr "Drittanbieter-Abhängigkeiten"
+
+msgid "Version"
+msgstr "Version"
+
+msgid "Package"
+msgstr "Paket"
+
+msgid "Description"
+msgstr "Beschreibung"
+
+# Calculator
+msgid "Scientific calculator with expression AST visualization"
+msgstr "Wissenschaftlicher Taschenrechner mit Ausdrucks-AST-Visualisierung"
+
+msgid "Expression Tree"
+msgstr "Ausdrucksbaum"
+
+msgid "Evaluate an expression to see the AST"
+msgstr "Ausdruck eingeben, um den AST zu sehen"
+
+# Vector Calculator
+msgid "Vector Calculator"
+msgstr "Vektorrechner"
+
+msgid "2D/3D vector operations with canvas visualization"
+msgstr "2D/3D-Vektoroperationen mit Canvas-Visualisierung"
+
+msgid "Vector A"
+msgstr "Vektor A"
+
+msgid "Vector B"
+msgstr "Vektor B"
+
+msgid "Angle"
+msgstr "Winkel"
+
+msgid "Length:"
+msgstr "Länge:"
+
+msgid "Angle A,B:"
+msgstr "Winkel A,B:"
+
+msgid "Dot A·B:"
+msgstr "Skalarprodukt A·B:"
+
+msgid "Dot Product (A · B)"
+msgstr "Skalarprodukt (A · B)"
+
+msgid "Cross Product (A × B)"
+msgstr "Kreuzprodukt (A × B)"
+
+msgid "Add (A + B)"
+msgstr "Addieren (A + B)"
+
+msgid "Subtract (A − B)"
+msgstr "Subtrahieren (A − B)"
+
+msgid "Scale A"
+msgstr "Skalieren A"
+
+msgid "Normalize A"
+msgstr "Normalisieren A"
+
+msgid "Lerp"
+msgstr "Lerp"
+
+msgid "Reflect (A off normal B)"
+msgstr "Reflektieren (A an Normale B)"
+
+msgid "Normal vector (B)"
+msgstr "Normalvektor (B)"
+
+msgid "Normalized A:"
+msgstr "Normalisiertes A:"
+
+msgid "Distance"
+msgstr "Abstand"
+
+msgid "Operation"
+msgstr "Operation"
+
+msgid "Scalar"
+msgstr "Skalar"
+
+msgid "t"
+msgstr "t"
+
+msgid "Calculate"
+msgstr "Berechnen"
+
+msgid "Copy First"
+msgstr "Erstes kopieren"
+
+msgid "View:"
+msgstr "Ansicht:"
+
+msgid "Unit"
+msgstr "Einheit"
+
+# Lorem Ipsum Generator
+msgid "Lorem Ipsum Generator"
+msgstr "Lorem-Ipsum-Generator"
+
+msgid "Generate placeholder text by words, sentences, or paragraphs"
+msgstr "Platzhaltertext nach Wörtern, Sätzen oder Absätzen generieren"
+
+msgid "Words"
+msgstr "Wörter"
+
+msgid "Sentences"
+msgstr "Sätze"
+
+msgid "Paragraphs"
+msgstr "Absätze"
+
+msgid "Count"
+msgstr "Anzahl"
+
+msgid "Classic opening"
+msgstr "Klassischer Einstieg"
+
+msgid "Generate"
+msgstr "Generieren"
+
+msgid "Generated text will appear here..."
+msgstr "Generierter Text erscheint hier..."
+
+# UUID Generator
+msgid "UUID Generator"
+msgstr "UUID-Generator"
+
+msgid "Generate universally unique identifiers, versions 1–7"
+msgstr "Universell eindeutige Bezeichner, Versionen 1–7, generieren"
+
+msgid "Namespace"
+msgstr "Namespace"
+
+msgid "v1 – Timestamp + MAC"
+msgstr "v1 – Zeitstempel + MAC"
+
+msgid "v3 – MD5 name-based"
+msgstr "v3 – MD5-namensbasiert"
+
+msgid "v4 – Random"
+msgstr "v4 – Zufällig"
+
+msgid "v5 – SHA-1 name-based"
+msgstr "v5 – SHA-1-namensbasiert"
+
+msgid "v6 – Reordered timestamp"
+msgstr "v6 – Neugeordneter Zeitstempel"
+
+msgid "v7 – Unix timestamp + random"
+msgstr "v7 – Unix-Zeitstempel + Zufall"
+
+msgid "Generated UUIDs will appear here..."
+msgstr "Generierte UUIDs erscheinen hier..."
+
+msgid "e.g. example.com"
+msgstr "z.B. example.com"
+
+msgid "Name"
+msgstr "Name"
+
+# Random Generator
+msgid "Random Generator"
+msgstr "Zufallsgenerator"
+
+msgid "Generate random text strings and numbers"
+msgstr "Zufällige Texte und Zahlen generieren"
+
+msgid "Character set"
+msgstr "Zeichensatz"
+
+msgid "Integer"
+msgstr "Ganzzahl"
+
+msgid "Float"
+msgstr "Gleitkomma"
+
+msgid "Min"
+msgstr "Min"
+
+msgid "Max"
+msgstr "Max"
+
+msgid "Decimal places"
+msgstr "Dezimalstellen"
+
+msgid "Uppercase A-Z"
+msgstr "Großbuchstaben A-Z"
+
+msgid "Lowercase a-z"
+msgstr "Kleinbuchstaben a-z"
+
+msgid "Digits 0-9"
+msgstr "Ziffern 0-9"
+
+msgid "Generated values will appear here..."
+msgstr "Generierte Werte erscheinen hier..."
+
+msgid "Number"
+msgstr "Zahl"
+
+msgid "Text"
+msgstr "Text"
+
+# Regex Tester
+msgid "Regex Tester"
+msgstr "Regex-Tester"
+
+msgid "Test regular expressions against text with match and replace support"
+msgstr "Reguläre Ausdrücke mit Suchen-und-Ersetzen gegen Text testen"
+
+msgid "Pattern"
+msgstr "Muster"
+
+msgid "Enter regex pattern…"
+msgstr "Regex-Muster eingeben…"
+
+msgid "(?i)"
+msgstr "(?i)"
+
+msgid "(?m)"
+msgstr "(?m)"
+
+msgid "(?s)"
+msgstr "(?s)"
+
+msgid "Test Input"
+msgstr "Testeingabe"
+
+msgid "Paste text to match against…"
+msgstr "Text zum Testen einfügen…"
+
+msgid "Mode"
+msgstr "Modus"
+
+msgid "Match"
+msgstr "Suchen"
+
+msgid "Replace"
+msgstr "Ersetzen"
+
+msgid "Replacement"
+msgstr "Ersatztext"
+
+msgid "e.g. $1_$2"
+msgstr "z.B. $1_$2"
+
+msgid "Results will appear here…"
+msgstr "Ergebnisse erscheinen hier…"
+
+msgid "Run"
+msgstr "Ausführen"
+
+msgid "Input"
+msgstr "Eingabe"
+
+# Text Differ
+msgid "Text Differ"
+msgstr "Textvergleich"
+
+msgid "Compare two text inputs and view the unified diff"
+msgstr "Zwei Texteingaben vergleichen und den Unified Diff anzeigen"
+
+msgid "Original"
+msgstr "Original"
+
+msgid "Modified"
+msgstr "Geändert"
+
+msgid "Paste original text here…"
+msgstr "Originaltext hier einfügen…"
+
+msgid "Paste modified text here…"
+msgstr "Geänderten Text hier einfügen…"
+
+msgid "Compare"
+msgstr "Vergleichen"
+
+msgid "Copy Diff"
+msgstr "Diff kopieren"
+
+# CRON Parser / Generator
+msgid "CRON Parser / Generator"
+msgstr "CRON-Parser / -Generator"
+
+msgid "Parse expressions and preview upcoming execution times"
+msgstr "Ausdrücke parsen und nächste Ausführungszeiten anzeigen"
+
+msgid "Expression"
+msgstr "Ausdruck"
+
+msgid "Parse"
+msgstr "Parsen"
+
+msgid "Next 10 Executions (UTC)"
+msgstr "Nächste 10 Ausführungen (UTC)"
+
+msgid "Builder"
+msgstr "Generator"
+
+msgid "Generate Expression"
+msgstr "Ausdruck generieren"
+
+msgid "Minute"
+msgstr "Minute"
+
+msgid "Hour"
+msgstr "Stunde"
+
+msgid "Day"
+msgstr "Tag"
+
+msgid "Month"
+msgstr "Monat"
+
+msgid "Weekday"
+msgstr "Wochentag"
+
+# QR Code Generator
+msgid "QR Code Generator"
+msgstr "QR-Code-Generator"
+
+msgid "Encode text or URLs as a QR code image"
+msgstr "Text oder URLs als QR-Code-Bild kodieren"
+
+msgid "Enter text or URL…"
+msgstr "Text oder URL eingeben…"
+
+msgid "Error Correction"
+msgstr "Fehlerkorrektur"
+
+msgid "Save PNG"
+msgstr "PNG speichern"
+
+msgid "Copy Image"
+msgstr "Bild kopieren"
+
+msgid "QR code will appear here"
+msgstr "QR-Code erscheint hier"
+
+msgid "Formatter"
+msgstr "Formatierer"
+
+msgid "Format and minify JSON, XML and YAML"
+msgstr "JSON, XML und YAML formatieren und minimieren"
+
+msgid "Format"
+msgstr "Formatieren"
+
+msgid "Minify"
+msgstr "Minimieren"
+
+msgid "Indent"
+msgstr "Einrückung"
+
+msgid "2 spaces"
+msgstr "2 Leerzeichen"
+
+msgid "4 spaces"
+msgstr "4 Leerzeichen"
+
+msgid "Tab"
+msgstr "Tab"
+
+msgid "Use as input"
+msgstr "Als Eingabe verwenden"
+
+msgid "Validate JSON, XML and YAML documents against schemas"
+msgstr "JSON-, XML- und YAML-Dokumente gegen Schemata validieren"
+
+msgid "XML is validated against the XSD (XSD 1.1). Without an XSD only well-formedness is checked. xs:include/xs:import of external files are not resolved."
+msgstr "XML wird gegen die XSD validiert (XSD 1.1). Ohne XSD wird nur die Wohlgeformtheit geprüft. xs:include/xs:import externer Dateien werden nicht aufgelöst."
+
+msgid "YAML is validated against a JSON Schema, which may be written as YAML or JSON."
+msgstr "YAML wird gegen ein JSON Schema validiert, das als YAML oder JSON geschrieben sein kann."
+
+msgid "This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License, version 2 only, as published by the Free Software Foundation. It is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+msgstr "Dieses Programm ist freie Software; Sie können es unter den Bedingungen der GNU General Public License, Version 2 (nur diese Version), wie von der Free Software Foundation veröffentlicht, weitergeben und/oder verändern. Es wird in der Hoffnung verbreitet, dass es nützlich ist, jedoch OHNE JEDE GEWÄHRLEISTUNG; sogar ohne die implizite Gewährleistung der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK."
+
+msgid "View license"
+msgstr "Lizenz anzeigen"

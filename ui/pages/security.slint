@@ -1,0 +1,201 @@
+import { Button, CheckBox, ComboBox, LineEdit } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { ResultList } from "../components/result-list.slint";
+import { AdvancedTextEdit } from "../components/advanced-text-edit.slint";
+import { SecurityState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+component Labeled inherits VerticalLayout {
+    in property <string> label;
+    in-out property <string> value;
+    in property <string> placeholder;
+    in property <length> field-width: 100px;
+    callback edited();
+
+    spacing: Theme.space-xs;
+
+    Text {
+        text: root.label;
+        font-size: Theme.font-xs;
+        color: Theme.color-subtle;
+    }
+
+    LineEdit {
+        text <=> root.value;
+        placeholder-text: root.placeholder;
+        font-size: Theme.font-sm;
+        width: root.field-width;
+        edited(_) => {
+            root.edited();
+        }
+    }
+}
+
+export component SecurityPage inherits PageContainer {
+    title-text: @tr("HMAC & Passwords");
+    subtitle-text: @tr("Compute HMACs, generate passwords and passphrases");
+
+    HorizontalLayout {
+        spacing: Theme.space-sm;
+        alignment: start;
+
+        Button {
+            text: "HMAC";
+            primary: SecurityState.mode-index == 0;
+            clicked => {
+                SecurityState.mode-index = 0;
+                SecurityState.generate();
+            }
+        }
+        Button {
+            text: @tr("Password");
+            primary: SecurityState.mode-index == 1;
+            clicked => {
+                SecurityState.mode-index = 1;
+                SecurityState.generate();
+            }
+        }
+        Button {
+            text: @tr("Passphrase");
+            primary: SecurityState.mode-index == 2;
+            clicked => {
+                SecurityState.mode-index = 2;
+                SecurityState.generate();
+            }
+        }
+    }
+
+    if SecurityState.mode-index == 0: VerticalLayout {
+        spacing: Theme.space-sm;
+        vertical-stretch: 1;
+
+        HorizontalLayout {
+            spacing: Theme.space-md;
+
+            ComboBox {
+                model: ["MD5", "SHA-1", "SHA-256", "SHA-512"];
+                current-index <=> SecurityState.hmac-algorithm-index;
+                selected(_) => {
+                    SecurityState.generate();
+                }
+            }
+            CheckBox {
+                text: @tr("Key is hex");
+                checked <=> SecurityState.hmac-key-hex;
+                toggled => {
+                    SecurityState.generate();
+                }
+            }
+        }
+
+        Text {
+            text: @tr("Key");
+            font-size: Theme.font-xs;
+            color: Theme.color-subtle;
+        }
+        LineEdit {
+            text <=> SecurityState.hmac-key;
+            font-size: Theme.font-sm;
+            edited(_) => {
+                SecurityState.generate();
+            }
+        }
+
+        Text {
+            text: @tr("Message");
+            font-size: Theme.font-xs;
+            color: Theme.color-subtle;
+        }
+        AdvancedTextEdit {
+            text <=> SecurityState.hmac-message;
+            font-family: "monospace";
+            font-size: Theme.font-sm;
+            vertical-stretch: 1;
+            edited(_) => {
+                SecurityState.generate();
+            }
+        }
+    }
+
+    if SecurityState.mode-index == 1: HorizontalLayout {
+        spacing: Theme.space-md;
+        alignment: start;
+
+        Labeled {
+            label: @tr("Length");
+            value <=> SecurityState.password-length;
+        }
+        Labeled {
+            label: @tr("Count");
+            value <=> SecurityState.count;
+        }
+        VerticalLayout {
+            spacing: Theme.space-xs;
+            CheckBox { text: @tr("Lowercase"); checked <=> SecurityState.password-lower; }
+            CheckBox { text: @tr("Uppercase"); checked <=> SecurityState.password-upper; }
+        }
+        VerticalLayout {
+            spacing: Theme.space-xs;
+            CheckBox { text: @tr("Digits"); checked <=> SecurityState.password-digits; }
+            CheckBox { text: @tr("Symbols"); checked <=> SecurityState.password-symbols; }
+        }
+        CheckBox { text: @tr("Exclude look-alikes (Il1O0o|)"); checked <=> SecurityState.password-no-look-alikes; }
+        Button {
+            text: @tr("Generate");
+            primary: true;
+            clicked => {
+                SecurityState.generate();
+            }
+        }
+    }
+
+    if SecurityState.mode-index == 2: HorizontalLayout {
+        spacing: Theme.space-md;
+        alignment: start;
+
+        Labeled {
+            label: @tr("Words");
+            value <=> SecurityState.passphrase-words;
+        }
+        Labeled {
+            label: @tr("Separator");
+            value <=> SecurityState.passphrase-separator;
+            field-width: 80px;
+        }
+        Labeled {
+            label: @tr("Count");
+            value <=> SecurityState.count;
+        }
+        CheckBox { text: @tr("Capitalize"); checked <=> SecurityState.passphrase-capitalize; }
+        CheckBox { text: @tr("Add a digit"); checked <=> SecurityState.passphrase-digit; }
+        Button {
+            text: @tr("Generate");
+            primary: true;
+            clicked => {
+                SecurityState.generate();
+            }
+        }
+    }
+
+    if !SecurityState.error.is-empty: Text {
+        text: SecurityState.error;
+        font-size: Theme.font-sm;
+        color: #e05050;
+        wrap: word-wrap;
+    }
+
+    if !SecurityState.note.is-empty: Text {
+        text: SecurityState.note;
+        font-size: Theme.font-sm;
+        color: Theme.color-muted;
+    }
+
+    ResultList {
+        rows: SecurityState.rows;
+        vertical-stretch: SecurityState.mode-index == 0 ? 0 : 1;
+        min-height: 90px;
+        copy-clicked(text) => {
+            SecurityState.copy(text);
+        }
+    }
+}

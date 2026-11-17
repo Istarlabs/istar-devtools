@@ -1,0 +1,122 @@
+import { ComboBox, LineEdit, Button } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { SeparatorLine } from "../components/separator-line.slint";
+import { AdvancedTextEdit } from "../components/advanced-text-edit.slint";
+import { UuidGeneratorState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+export component UuidGeneratorPage inherits PageContainer {
+    title-text: @tr("UUID Generator");
+    subtitle-text: @tr("Generate universally unique identifiers, versions 1–7");
+
+    HorizontalLayout {
+        spacing: Theme.space-md;
+        alignment: start;
+
+        Text {
+            text: @tr("Version");
+            vertical-alignment: center;
+        }
+
+        ComboBox {
+            model: [
+                @tr("v1 – Timestamp + MAC"),
+                @tr("v3 – MD5 name-based"),
+                @tr("v4 – Random"),
+                @tr("v5 – SHA-1 name-based"),
+                @tr("v6 – Reordered timestamp"),
+                @tr("v7 – Unix timestamp + random"),
+            ];
+            current-index <=> UuidGeneratorState.version-index;
+            selected(_) => {
+                UuidGeneratorState.version-changed(self.current-index);
+            }
+        }
+
+        Text {
+            text: @tr("Count");
+            vertical-alignment: center;
+        }
+
+        LineEdit {
+            text <=> UuidGeneratorState.count;
+            width: 80px;
+        }
+
+        Button {
+            text: @tr("Generate");
+            primary: true;
+            clicked => {
+                UuidGeneratorState.generate();
+            }
+        }
+    }
+
+    if UuidGeneratorState.version-index == 1 || UuidGeneratorState.version-index == 3:
+    HorizontalLayout {
+        spacing: Theme.space-md;
+        alignment: start;
+
+        Text {
+            text: @tr("Namespace");
+            vertical-alignment: center;
+        }
+
+        ComboBox {
+            model: ["DNS", "URL", "OID", "X500"];
+            current-index <=> UuidGeneratorState.namespace-index;
+        }
+
+        Text {
+            text: @tr("Name");
+            vertical-alignment: center;
+        }
+
+        LineEdit {
+            text <=> UuidGeneratorState.namespace-name;
+            placeholder-text: @tr("e.g. example.com");
+            min-width: 200px;
+        }
+    }
+
+    Text {
+        text: UuidGeneratorState.version-description;
+        font-size: Theme.font-sm;
+        color: Theme.color-muted;
+    }
+
+    if !UuidGeneratorState.error.is-empty:
+    Text {
+        text: UuidGeneratorState.error;
+        font-size: Theme.font-sm;
+        color: #e05050;
+    }
+
+    SeparatorLine { }
+
+    AdvancedTextEdit {
+        text <=> UuidGeneratorState.output;
+        read-only: true;
+        placeholder-text: @tr("Generated UUIDs will appear here...");
+        vertical-stretch: 1;
+    }
+
+    HorizontalLayout {
+        alignment: end;
+        spacing: Theme.space-sm;
+
+        Button {
+            text: @tr("Copy First");
+            clicked => {
+                UuidGeneratorState.copy-first();
+            }
+        }
+
+        Button {
+            text: @tr("Copy All");
+            clicked => {
+                UuidGeneratorState.copy-all();
+            }
+        }
+    }
+}

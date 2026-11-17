@@ -1,0 +1,142 @@
+import { Button, ScrollView } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { SeparatorLine } from "../components/separator-line.slint";
+import { AdvancedTextEdit } from "../components/advanced-text-edit.slint";
+import { TextDifferState } from "../globals.slint";
+import { DiffLineKind } from "../types.slint";
+import { Theme } from "../theme.slint";
+
+component DiffLineItem inherits Rectangle {
+    in property <DiffLineKind> kind;
+    in property <string> content;
+
+    property <color> accent-color: kind == DiffLineKind.Added ? #2ea043
+        : (kind == DiffLineKind.Removed ? #da3633 : (kind == DiffLineKind.Header ? #4a9eff : transparent));
+
+    height: 22px;
+    background: kind == DiffLineKind.Added ? #0d2a0d
+        : (kind == DiffLineKind.Removed ? #2a0d0d : transparent);
+
+    HorizontalLayout {
+        Rectangle {
+            width: 3px;
+            background: accent-color;
+        }
+
+        Rectangle { width: 8px; }
+
+        Text {
+            text: content;
+            font-size: Theme.font-sm;
+            font-family: "monospace";
+            color: kind == DiffLineKind.Header ? #4a9eff
+                : (kind == DiffLineKind.Added ? #7ee787
+                : (kind == DiffLineKind.Removed ? #ffa198 : Theme.color-nav-item));
+            vertical-alignment: center;
+            overflow: elide;
+            horizontal-stretch: 1;
+        }
+
+        Rectangle { width: 8px; }
+    }
+}
+
+export component TextDifferPage inherits PageContainer {
+    title-text: @tr("Text Differ");
+    subtitle-text: @tr("Compare two text inputs and view the unified diff");
+
+    HorizontalLayout {
+        spacing: Theme.space-md;
+        height: 220px;
+
+        VerticalLayout {
+            horizontal-stretch: 1;
+            spacing: Theme.space-xs;
+
+            Text {
+                text: @tr("Original");
+                font-size: Theme.font-sm;
+                color: Theme.color-muted;
+            }
+
+            AdvancedTextEdit {
+                text <=> TextDifferState.left-text;
+                placeholder-text: @tr("Paste original text here…");
+                vertical-stretch: 1;
+                wrap: no-wrap;
+            }
+        }
+
+        SeparatorLine {
+            orientation: vertical;
+        }
+
+        VerticalLayout {
+            horizontal-stretch: 1;
+            spacing: Theme.space-xs;
+
+            Text {
+                text: @tr("Modified");
+                font-size: Theme.font-sm;
+                color: Theme.color-muted;
+            }
+
+            AdvancedTextEdit {
+                text <=> TextDifferState.right-text;
+                placeholder-text: @tr("Paste modified text here…");
+                vertical-stretch: 1;
+                wrap: no-wrap;
+            }
+        }
+    }
+
+    SeparatorLine { }
+
+    HorizontalLayout {
+        spacing: Theme.space-sm;
+        alignment: start;
+
+        Button {
+            text: @tr("Compare");
+            primary: true;
+            clicked => {
+                TextDifferState.diff();
+            }
+        }
+
+        Button {
+            text: @tr("Clear");
+            clicked => {
+                TextDifferState.clear();
+            }
+        }
+
+        Rectangle { horizontal-stretch: 1; }
+
+        Button {
+            text: @tr("Copy Diff");
+            enabled: !TextDifferState.unified-output.is-empty;
+            clicked => {
+                TextDifferState.copy-unified();
+            }
+        }
+    }
+
+    if !TextDifferState.error.is-empty: Text {
+        text: TextDifferState.error;
+        font-size: Theme.font-sm;
+        color: #e05050;
+    }
+
+    ScrollView {
+        vertical-stretch: 1;
+        viewport-height: TextDifferState.diff-lines.length * 22px;
+
+        VerticalLayout {
+            for line in TextDifferState.diff-lines: DiffLineItem {
+                kind: line.kind;
+                content: line.content;
+            }
+        }
+    }
+}

@@ -1,0 +1,170 @@
+import { Button, CheckBox, LineEdit } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { ResultList } from "../components/result-list.slint";
+import { AdvancedTextEdit } from "../components/advanced-text-edit.slint";
+import { HexViewerState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+export component HexViewerPage inherits PageContainer {
+    title-text: @tr("Hex Viewer");
+    subtitle-text: @tr("Inspect the bytes of a file or of pasted text");
+
+    HorizontalLayout {
+        spacing: Theme.space-sm;
+
+        Button {
+            text: @tr("Open file");
+            primary: true;
+            clicked => {
+                HexViewerState.open-file();
+            }
+        }
+        Button {
+            text: @tr("Paste text");
+            clicked => {
+                HexViewerState.paste-text();
+            }
+        }
+        Button {
+            text: @tr("Paste hex");
+            clicked => {
+                HexViewerState.paste-hex();
+            }
+        }
+
+        Rectangle { horizontal-stretch: 1; }
+
+        LineEdit {
+            text <=> HexViewerState.offset-text;
+            placeholder-text: @tr("Offset (0x… or decimal)");
+            width: 190px;
+            accepted(_) => {
+                HexViewerState.go-to();
+            }
+        }
+        Button {
+            text: @tr("Go");
+            enabled: HexViewerState.has-data;
+            clicked => {
+                HexViewerState.go-to();
+            }
+        }
+
+        LineEdit {
+            text <=> HexViewerState.search-text;
+            placeholder-text: HexViewerState.search-is-hex ? "de ad be ef" : @tr("Search text");
+            width: 190px;
+            accepted(_) => {
+                HexViewerState.find();
+            }
+        }
+        CheckBox {
+            text: "hex";
+            checked <=> HexViewerState.search-is-hex;
+        }
+        Button {
+            text: @tr("Find");
+            enabled: HexViewerState.has-data;
+            clicked => {
+                HexViewerState.find();
+            }
+        }
+    }
+
+    if !HexViewerState.error.is-empty: Text {
+        text: HexViewerState.error;
+        font-size: Theme.font-sm;
+        color: #e05050;
+        wrap: word-wrap;
+    }
+
+    HorizontalLayout {
+        spacing: Theme.space-md;
+        vertical-stretch: 1;
+
+        VerticalLayout {
+            spacing: Theme.space-xs;
+            horizontal-stretch: 2;
+
+            HorizontalLayout {
+                spacing: Theme.space-sm;
+
+                Text {
+                    text: HexViewerState.window-info;
+                    font-size: Theme.font-sm;
+                    color: Theme.color-muted;
+                    vertical-alignment: center;
+                    horizontal-stretch: 1;
+                }
+                Button {
+                    text: "◀";
+                    enabled: HexViewerState.can-prev;
+                    clicked => {
+                        HexViewerState.prev-page();
+                    }
+                }
+                Button {
+                    text: "▶";
+                    enabled: HexViewerState.can-next;
+                    clicked => {
+                        HexViewerState.next-page();
+                    }
+                }
+                Button {
+                    text: @tr("Copy");
+                    enabled: HexViewerState.has-data;
+                    clicked => {
+                        HexViewerState.copy-dump();
+                    }
+                }
+            }
+
+            AdvancedTextEdit {
+                text: HexViewerState.dump;
+                read-only: true;
+                wrap: no-wrap;
+                font-family: "monospace";
+                font-size: Theme.font-sm;
+                vertical-stretch: 1;
+            }
+        }
+
+        VerticalLayout {
+            spacing: Theme.space-xs;
+            horizontal-stretch: 1;
+
+            Text {
+                text: @tr("Details");
+                font-size: Theme.font-sm;
+                color: Theme.color-muted;
+            }
+
+            ResultList {
+                rows: HexViewerState.facts;
+                vertical-stretch: 1;
+                copy-clicked(text) => {
+                    HexViewerState.copy(text);
+                }
+            }
+
+            if HexViewerState.matches.length > 0: VerticalLayout {
+                spacing: Theme.space-xs;
+                vertical-stretch: 1;
+
+                Text {
+                    text: @tr("Matches");
+                    font-size: Theme.font-sm;
+                    color: Theme.color-muted;
+                }
+
+                ResultList {
+                    rows: HexViewerState.matches;
+                    vertical-stretch: 1;
+                    copy-clicked(text) => {
+                        HexViewerState.copy(text);
+                    }
+                }
+            }
+        }
+    }
+}

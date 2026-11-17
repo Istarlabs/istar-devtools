@@ -1,0 +1,138 @@
+import { Button, ComboBox } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { AdvancedTextEdit } from "../components/advanced-text-edit.slint";
+import { CompressionState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+export component CompressionPage inherits PageContainer {
+    title-text: @tr("Compress");
+    subtitle-text: @tr("Compress text with gzip, zlib or deflate, and decompress it");
+
+    HorizontalLayout {
+        spacing: Theme.space-sm;
+
+        Button {
+            text: @tr("Compress");
+            primary: !CompressionState.decompress-mode;
+            clicked => {
+                CompressionState.decompress-mode = false;
+                CompressionState.run();
+            }
+        }
+
+        Button {
+            text: @tr("Decompress");
+            primary: CompressionState.decompress-mode;
+            clicked => {
+                CompressionState.decompress-mode = true;
+                CompressionState.run();
+            }
+        }
+
+        Button {
+            text: "⇄";
+            clicked => {
+                CompressionState.swap();
+            }
+        }
+
+        if !CompressionState.decompress-mode: ComboBox {
+            model: ["gzip", "zlib", "raw deflate"];
+            current-index <=> CompressionState.format-index;
+            selected(_) => {
+                CompressionState.run();
+            }
+        }
+
+        if !CompressionState.decompress-mode: ComboBox {
+            model: [@tr("Fast"), @tr("Default"), @tr("Best")];
+            current-index <=> CompressionState.level-index;
+            selected(_) => {
+                CompressionState.run();
+            }
+        }
+
+        if !CompressionState.decompress-mode: ComboBox {
+            model: ["Base64", "Hex"];
+            current-index <=> CompressionState.encoding-index;
+            selected(_) => {
+                CompressionState.run();
+            }
+        }
+
+        Rectangle { horizontal-stretch: 1; }
+
+        Button {
+            text: @tr("Paste");
+            clicked => {
+                CompressionState.paste-input();
+            }
+        }
+
+        Button {
+            text: @tr("Copy");
+            enabled: !CompressionState.output.is-empty;
+            clicked => {
+                CompressionState.copy-output();
+            }
+        }
+    }
+
+    if CompressionState.decompress-mode: Text {
+        text: @tr("Paste Base64 or hex; the format (gzip, zlib, raw deflate) is detected automatically.");
+        font-size: Theme.font-xs;
+        color: Theme.color-muted;
+    }
+
+    HorizontalLayout {
+        spacing: Theme.space-md;
+        vertical-stretch: 1;
+
+        VerticalLayout {
+            spacing: Theme.space-xs;
+            horizontal-stretch: 1;
+
+            Text {
+                text: CompressionState.decompress-mode ? @tr("Compressed (Base64 / hex)") : @tr("Text");
+                font-size: Theme.font-sm;
+                color: Theme.color-muted;
+            }
+
+            AdvancedTextEdit {
+                text <=> CompressionState.input;
+                font-family: "monospace";
+                font-size: Theme.font-sm;
+                vertical-stretch: 1;
+                edited(_) => {
+                    CompressionState.run();
+                }
+            }
+        }
+
+        VerticalLayout {
+            spacing: Theme.space-xs;
+            horizontal-stretch: 1;
+
+            Text {
+                text: CompressionState.info.is-empty ? @tr("Output") : CompressionState.info;
+                font-size: Theme.font-sm;
+                color: Theme.color-muted;
+            }
+
+            AdvancedTextEdit {
+                text: CompressionState.output;
+                read-only: true;
+                font-family: "monospace";
+                font-size: Theme.font-sm;
+                vertical-stretch: 1;
+            }
+        }
+    }
+
+    if !CompressionState.error.is-empty: Text {
+        text: CompressionState.error;
+        font-size: Theme.font-sm;
+        color: #e05050;
+        wrap: word-wrap;
+    }
+}

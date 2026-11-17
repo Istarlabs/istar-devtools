@@ -1,0 +1,40 @@
+import { Icon } from "@lucide";
+
+export enum AppPages { Home, Info, Settings, Base64, TextInspector, HashGenerator, Chmod, Html, SystemInfo, NumberBase, UnitConverter, Calculator, VectorCalculator, LoremIpsum, UuidGenerator, RandomGenerator, RegexTester, TextDiffer, Cron, QrCode, Jwt, SchemaValidator, ColorImage, Formatter, Systemd, Timestamp, Url, FormatConverter, PathQuery, Cidr, Certificate, Security, Escape, Markdown, SqlFormatter, HexViewer, IdTools, CssTools, Compression }
+
+export enum DiffLineKind { Equal, Added, Removed, Header }
+
+export struct DiffLine {
+    kind: DiffLineKind,
+    content: string,
+}
+
+export struct MdBlock { kind: int, level: int, text: string }
+
+export struct ResultRow { label: string, value: string }
+
+export struct AstNode { depth: int, label: string }
+
+export struct NavItem { text: string, group: string, tags: string, image: Icon, page: AppPages}
+
+export struct CursorPosition { line: int, row: int}
+export struct TextStatistics { char-count: int, word-count: int, lines: int}
+export struct DiskInfo { mount: string, device: string, total: string, used: string, free: string}
+export struct NumberBaseData { decimal: string, binary: string, hex: string, octal: string, ascii: string, utf8: string}
+export enum NumberBaseType {Decimal, Binary, HexaDecimal, Octal, Ascii, Utf8}
+
+export struct LicenseDep { name: string, version: string, license: string, description: string, repository: string }
+
+export struct VectorInput { x: string, y: string, z: string }
+export struct VectorResult {
+    x: string,
+    y: string,
+    z: string,
+    length: string,
+    dot: string,
+    angle-deg: string,
+    scalar-result: string,
+    normalized: string,
+    is-valid: bool,
+    error: string,
+}

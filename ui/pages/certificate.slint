@@ -1,0 +1,83 @@
+import { Button } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { ResultList } from "../components/result-list.slint";
+import { AdvancedTextEdit } from "../components/advanced-text-edit.slint";
+import { CertificateState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+export component CertificatePage inherits PageContainer {
+    title-text: @tr("Certificate");
+    subtitle-text: @tr("Decode PEM blocks and X.509 certificates");
+
+    HorizontalLayout {
+        spacing: Theme.space-sm;
+        alignment: end;
+
+        Button {
+            text: @tr("Open file");
+            clicked => {
+                CertificateState.open-file();
+            }
+        }
+
+        Button {
+            text: @tr("Paste");
+            clicked => {
+                CertificateState.paste-input();
+            }
+        }
+    }
+
+    HorizontalLayout {
+        spacing: Theme.space-md;
+        vertical-stretch: 1;
+
+        VerticalLayout {
+            spacing: Theme.space-xs;
+            horizontal-stretch: 1;
+
+            Text {
+                text: "PEM";
+                font-size: Theme.font-sm;
+                color: Theme.color-muted;
+            }
+
+            AdvancedTextEdit {
+                text <=> CertificateState.input;
+                placeholder-text: "-----BEGIN CERTIFICATE-----";
+                font-family: "monospace";
+                font-size: Theme.font-sm;
+                vertical-stretch: 1;
+                edited(_) => {
+                    CertificateState.decode();
+                }
+            }
+        }
+
+        VerticalLayout {
+            spacing: Theme.space-xs;
+            horizontal-stretch: 1;
+
+            Text {
+                text: @tr("Details");
+                font-size: Theme.font-sm;
+                color: Theme.color-muted;
+            }
+
+            if !CertificateState.error.is-empty: Text {
+                text: CertificateState.error;
+                font-size: Theme.font-sm;
+                color: #e05050;
+                wrap: word-wrap;
+            }
+
+            ResultList {
+                rows: CertificateState.rows;
+                vertical-stretch: 1;
+                copy-clicked(text) => {
+                    CertificateState.copy(text);
+                }
+            }
+        }
+    }
+}

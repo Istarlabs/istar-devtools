@@ -1,0 +1,66 @@
+[package]
+name = "istar-devtools"
+version = "0.1.0"
+authors = ["Pascal Klose <istarlabs_dev@proton.me>"]
+edition = "2024"
+build = "build.rs"
+license = "GPL-3.0-or-later"
+description = "A developer toolbox for the desktop: encoders, hashes, JWT, converters, formatters and more, offline"
+repository = "https://github.com/Istarlabs/istar-devtools"
+
+[dependencies]
+calc_engine = { path = "calc_engine" }
+math = { path = "math" }
+adler = "1.0.2"
+dirs = "6"
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+serde_norway = "0.9"
+arboard = { version = "3.6.1", default-features = false, features = ["wayland-data-control", "image-data"] }
+base64 = "0.22.1"
+crc = "3.4.0"
+hex = "0.4.3"
+html-escape = "0.2.13"
+lipsum = "0.9"
+md5 = "0.8.0"
+rand = "0.8"
+regex = "1.12.3"
+similar = "2"
+uuid = { version = "1", features = ["v1", "v3", "v4", "v5", "v6", "v7"] }
+rfd = { version = "0.17.2", default-features = false, features = ["xdg-portal"] }
+sha1 = "0.11.0"
+sha2 = "0.11.0"
+sha3 = "0.12.0"
+#slint = "1.16.1"
+slint = { version = "1.16.1", features = ["backend-winit-wayland", "renderer-femtovg"] }
+sysinfo = "0.39.3"
+croner = "3.0.1"
+chrono = "0.4.45"
+chrono-tz = "0.10"
+url = "2"
+percent-encoding = "2"
+toml = "1"
+csv = "1"
+serde_json_path = "0.7"
+x509-parser = "0.18"
+flate2 = "1"
+sqlformat = "0.5"
+pulldown-cmark = { version = "0.13", default-features = false, features = ["html"] }
+qrcode = "0.14.1"
+image = "0.25.10"
+jsonwebtoken = "10.4.0"
+jsonschema = { version = "0.46.5", default-features = false }
+quick-xml = "0.40.1"
+uppsala = "0.12"
+css-color-parser2 = "1.0.1"
+
+[build-dependencies]
+lucide-slint = "1.17.0"
+slint-build = "1.16.1"
+
+[profile.release]
+codegen-units = 1
+lto = true
+
+[patch.crates-io]
+parley = { path = "patches/parley" }

@@ -1,0 +1,59 @@
+import { Button, LineEdit, HorizontalBox } from "std-widgets.slint";
+import { Theme } from "../theme.slint";
+
+export component LabeledField {
+    in property <string> label: "Label";
+    in-out property <string> value: "";
+
+    callback input-changed();
+    callback edit-clicked();
+    callback copy-clicked();
+    callback delete-clicked();
+
+    Rectangle {
+        border-radius: Theme.space-2xs;
+        border-width: 1px;
+
+        VerticalLayout {
+            padding: Theme.space-sm;
+            spacing: Theme.space-2xs;
+
+            Text {
+                text: root.label;
+                font-size: Theme.font-xs;
+                color: Theme.color-subtle;
+            }
+
+            HorizontalLayout {
+                spacing: Theme.space-2xs;
+
+                LineEdit {
+                    text <=> root.value;
+                    placeholder-text: @tr("Enter value...");
+                    horizontal-stretch: 1;
+                    edited(text) => {
+                        root.input-changed();
+                    }
+                }
+
+                Button {
+                    text: @tr("Edit");
+                    clicked => { root.edit-clicked(); }
+                }
+
+                Button {
+                    text: @tr("Copy");
+                    clicked => { root.copy-clicked(); }
+                }
+
+                Button {
+                    text: @tr("Delete");
+                    clicked => {
+                        root.value = "";
+                        root.delete-clicked();
+                    }
+                }
+            }
+        }
+    }
+}

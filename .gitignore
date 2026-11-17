@@ -1,0 +1,5 @@
+target/
+
+# A third-party skill without a licence: used here, not published.
+.claude/skills/lib-slint-expert/
+.idea/

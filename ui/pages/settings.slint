@@ -1,0 +1,28 @@
+import { ComboBox } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { SettingsState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+export component SettingsPage inherits PageContainer {
+    title-text: @tr("Settings");
+    subtitle-text: @tr("Customize application settings");
+
+    HorizontalLayout {
+        spacing: Theme.space-sm;
+        alignment: start;
+
+        Text {
+            text: @tr("Language");
+            vertical-alignment: center;
+        }
+
+        ComboBox {
+            // Native language names — always recognizable regardless of current UI language
+            model: ["English", "Deutsch", "Español", "日本語"];
+            current-index <=> SettingsState.current-language;
+            selected => {
+                SettingsState.set-language(self.current-index);
+            }
+        }
+    }
+}

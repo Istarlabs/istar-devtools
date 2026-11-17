@@ -1,0 +1,157 @@
+import { LineEdit, Button, CheckBox } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { SeparatorLine } from "../components/separator-line.slint";
+import { AdvancedTextEdit } from "../components/advanced-text-edit.slint";
+import { RegexTesterState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+export component RegexTesterPage inherits PageContainer {
+    title-text: @tr("Regex Tester");
+    subtitle-text: @tr("Test regular expressions against text with match and replace support");
+
+    HorizontalLayout {
+        spacing: Theme.space-md;
+
+        Text {
+            text: @tr("Pattern");
+            vertical-alignment: center;
+        }
+
+        LineEdit {
+            text <=> RegexTesterState.pattern;
+            placeholder-text: @tr("Enter regex pattern…");
+            horizontal-stretch: 1;
+        }
+
+        CheckBox {
+            text: @tr("(?i)");
+            checked <=> RegexTesterState.flag-case-insensitive;
+        }
+
+        CheckBox {
+            text: @tr("(?m)");
+            checked <=> RegexTesterState.flag-multiline;
+        }
+
+        CheckBox {
+            text: @tr("(?s)");
+            checked <=> RegexTesterState.flag-dot-all;
+        }
+
+        Button {
+            text: @tr("Run");
+            primary: true;
+            clicked => {
+                RegexTesterState.run();
+            }
+        }
+    }
+
+    if !RegexTesterState.error.is-empty: Text {
+        text: RegexTesterState.error;
+        font-size: Theme.font-sm;
+        color: #e05050;
+        wrap: word-wrap;
+    }
+
+    HorizontalLayout {
+        spacing: Theme.space-sm;
+        alignment: start;
+
+        Text {
+            text: @tr("Mode");
+            vertical-alignment: center;
+            color: Theme.color-muted;
+        }
+
+        Button {
+            text: @tr("Match");
+            primary: !RegexTesterState.replace-mode;
+            clicked => {
+                RegexTesterState.replace-mode = false;
+            }
+        }
+
+        Button {
+            text: @tr("Replace");
+            primary: RegexTesterState.replace-mode;
+            clicked => {
+                RegexTesterState.replace-mode = true;
+            }
+        }
+    }
+
+    SeparatorLine { }
+
+    HorizontalLayout {
+        spacing: Theme.space-md;
+        vertical-stretch: 1;
+
+        VerticalLayout {
+            horizontal-stretch: 1;
+            spacing: Theme.space-sm;
+
+            Text {
+                text: @tr("Test Input");
+                font-size: Theme.font-sm;
+                color: Theme.color-muted;
+            }
+
+            AdvancedTextEdit {
+                text <=> RegexTesterState.test-input;
+                placeholder-text: @tr("Paste text to match against…");
+                vertical-stretch: 1;
+                wrap: no-wrap;
+            }
+
+            if RegexTesterState.replace-mode: HorizontalLayout {
+                spacing: Theme.space-sm;
+
+                Text {
+                    text: @tr("Replacement");
+                    vertical-alignment: center;
+                }
+
+                LineEdit {
+                    text <=> RegexTesterState.replacement;
+                    placeholder-text: @tr("e.g. $1_$2");
+                    horizontal-stretch: 1;
+                }
+            }
+        }
+
+        SeparatorLine {
+            orientation: vertical;
+        }
+
+        VerticalLayout {
+            horizontal-stretch: 1;
+            spacing: Theme.space-sm;
+
+            HorizontalLayout {
+                Text {
+                    text: RegexTesterState.match-label;
+                    font-size: Theme.font-sm;
+                    color: Theme.color-muted;
+                    vertical-alignment: center;
+                    horizontal-stretch: 1;
+                }
+
+                if RegexTesterState.replace-mode: Button {
+                    text: @tr("Copy");
+                    clicked => {
+                        RegexTesterState.copy-output();
+                    }
+                }
+            }
+
+            AdvancedTextEdit {
+                text <=> RegexTesterState.output;
+                read-only: true;
+                placeholder-text: @tr("Results will appear here…");
+                vertical-stretch: 1;
+                wrap: no-wrap;
+            }
+        }
+    }
+}

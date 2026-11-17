@@ -1,0 +1,75 @@
+import { PageContainer } from "../components/page-container.slint";
+import { LabeledField } from "../components/labeled-field.slint";
+import { NumberBaseState } from "../globals.slint";
+import { NumberBaseType } from "../types.slint";
+
+export component NumberBasePage inherits PageContainer {
+    title-text: @tr("Number Base Converter");
+    subtitle-text: @tr("Converts numbers into different number bases or ASCII/UTF-8 characters");
+
+    LabeledField {
+        value <=> NumberBaseState.data.decimal;
+        label: @tr("Decimal");
+        copy-clicked => {
+            NumberBaseState.copy-field(NumberBaseType.Decimal);
+        }
+        input-changed => {
+            NumberBaseState.on-input(NumberBaseType.Decimal);
+        }
+    }
+
+    LabeledField {
+        value <=> NumberBaseState.data.binary;
+        label: @tr("Binary");
+        copy-clicked => {
+            NumberBaseState.copy-field(NumberBaseType.Binary);
+        }
+        input-changed => {
+            NumberBaseState.on-input(NumberBaseType.Binary);
+        }
+    }
+
+    LabeledField {
+        value <=> NumberBaseState.data.octal;
+        label: @tr("Octal");
+        copy-clicked => {
+            NumberBaseState.copy-field(NumberBaseType.Octal);
+        }
+        input-changed => {
+            NumberBaseState.on-input(NumberBaseType.Octal);
+        }
+    }
+
+    LabeledField {
+        value <=> NumberBaseState.data.hex;
+        label: @tr("Hexadecimal");
+        copy-clicked => {
+            NumberBaseState.copy-field(NumberBaseType.HexaDecimal);
+        }
+        input-changed => {
+            NumberBaseState.on-input(NumberBaseType.HexaDecimal);
+        }
+    }
+
+    LabeledField {
+        value <=> NumberBaseState.data.ascii;
+        label: @tr("ASCII");
+        copy-clicked => {
+            NumberBaseState.copy-field(NumberBaseType.Ascii);
+        }
+        input-changed => {
+            NumberBaseState.on-input(NumberBaseType.Ascii);
+        }
+    }
+
+    LabeledField {
+        value <=> NumberBaseState.data.utf8;
+        label: @tr("UTF-8");
+        copy-clicked => {
+            NumberBaseState.copy-field(NumberBaseType.Utf8);
+        }
+        input-changed => {
+            NumberBaseState.on-input(NumberBaseType.Utf8);
+        }
+    }
+}

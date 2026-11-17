@@ -1,0 +1,687 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ja\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+# Navigation
+msgid "Get Started"
+msgstr "スタート"
+
+msgid "Text Inspector"
+msgstr "テキスト検査"
+
+msgid "Hash Generator"
+msgstr "ハッシュ生成"
+
+msgid "Chmod-Notation"
+msgstr "chmod記法"
+
+msgid "System Info"
+msgstr "システム情報"
+
+msgid "Number Base"
+msgstr "進数変換"
+
+msgid "Unit Converter"
+msgstr "単位変換"
+
+msgid "Settings"
+msgstr "設定"
+
+# Common buttons
+msgid "Open File"
+msgstr "ファイルを開く"
+
+msgid "Paste"
+msgstr "貼り付け"
+
+msgid "Clear"
+msgstr "クリア"
+
+msgid "Copy"
+msgstr "コピー"
+
+msgid "Copy All"
+msgstr "すべてコピー"
+
+msgid "Edit"
+msgstr "編集"
+
+msgid "Delete"
+msgstr "削除"
+
+# Common labels
+msgid "Encoding"
+msgstr "エンコード中"
+
+msgid "Decoding"
+msgstr "デコード中"
+
+msgid "URL Safe"
+msgstr "URLセーフ"
+
+msgid "Enter value..."
+msgstr "値を入力..."
+
+msgid "Result"
+msgstr "結果"
+
+# Base64
+msgid "Base64 Encoder & Decoder"
+msgstr "Base64 エンコーダー & デコーダー"
+
+msgid "Encode and decode strings using the Base64 format"
+msgstr "Base64形式で文字列をエンコード・デコードします"
+
+# Text Inspector
+msgid "Text Inspector and Case Converter"
+msgstr "テキスト検査とケース変換"
+
+msgid "Shows text statistics and change sentence case"
+msgstr "テキストの統計情報を表示し、ケースを変更します"
+
+msgid "Change case"
+msgstr "ケース変更"
+
+msgid "Line: "
+msgstr "行: "
+
+msgid "Row: "
+msgstr "列: "
+
+msgid "Characters: "
+msgstr "文字数: "
+
+msgid "Words: "
+msgstr "単語数: "
+
+msgid "Lines: "
+msgstr "行数: "
+
+msgid "Sentence case"
+msgstr "文頭大文字"
+
+msgid "lower case"
+msgstr "小文字"
+
+msgid "UPPER CASE"
+msgstr "大文字"
+
+msgid "Title Case"
+msgstr "タイトルケース"
+
+msgid "Reverse"
+msgstr "逆順"
+
+# Hash Generator
+msgid "Calculate and verify hashes for MD5, SHA1, SHA256, SHA512 and more"
+msgstr "MD5、SHA1、SHA256、SHA512などのハッシュを計算・検証します"
+
+msgid "Algorithm"
+msgstr "アルゴリズム"
+
+# Chmod
+msgid "chmod Notation"
+msgstr "chmod記法"
+
+msgid "Calculate numeric and symbolic notation values for chmod"
+msgstr "chmodの数値・シンボル表記を計算します"
+
+msgid "Permission"
+msgstr "権限"
+
+msgid "Set UID"
+msgstr "SUID設定"
+
+msgid "Set GID"
+msgstr "SGID設定"
+
+msgid "Special"
+msgstr "特殊"
+
+msgid "Owner"
+msgstr "所有者"
+
+msgid "Group"
+msgstr "グループ"
+
+msgid "Other"
+msgstr "その他"
+
+msgid "Read"
+msgstr "読み取り"
+
+msgid "Write"
+msgstr "書き込み"
+
+msgid "Execute"
+msgstr "実行"
+
+msgid "Numeric:"
+msgstr "数値:"
+
+msgid "Symbolic:"
+msgstr "シンボル:"
+
+# HTML
+msgid "HTML Encode & Decode"
+msgstr "HTML エンコード & デコード"
+
+msgid "Encode and decode HTML entities"
+msgstr "HTMLエンティティをエンコード・デコードします"
+
+# System Info
+msgid "System Information"
+msgstr "システム情報"
+
+msgid "Overview of your system hardware and OS"
+msgstr "システムのハードウェアとOSの概要"
+
+msgid "Operating System"
+msgstr "オペレーティングシステム"
+
+msgid "Desktop Environment"
+msgstr "デスクトップ環境"
+
+msgid "Storage"
+msgstr "ストレージ"
+
+msgid "used"
+msgstr "使用中"
+
+msgid "total"
+msgstr "合計"
+
+msgid "free"
+msgstr "空き"
+
+# Number Base
+msgid "Number Base Converter"
+msgstr "進数変換"
+
+msgid "Converts numbers into different number bases or ASCII/UTF-8 characters"
+msgstr "数値を異なる進数やASCII/UTF-8文字に変換します"
+
+msgid "Decimal"
+msgstr "10進数"
+
+msgid "Binary"
+msgstr "2進数"
+
+msgid "Octal"
+msgstr "8進数"
+
+msgid "Hexadecimal"
+msgstr "16進数"
+
+# Unit Converter
+msgid "Convert values between different units of measurement"
+msgstr "異なる単位間で値を変換します"
+
+msgid "Category:"
+msgstr "カテゴリ:"
+
+msgid "Length"
+msgstr "長さ"
+
+msgid "Mass"
+msgstr "質量"
+
+msgid "Temperature"
+msgstr "温度"
+
+msgid "Speed"
+msgstr "速度"
+
+msgid "Area"
+msgstr "面積"
+
+msgid "Volume"
+msgstr "体積"
+
+msgid "Time"
+msgstr "時間"
+
+msgid "From"
+msgstr "変換元"
+
+msgid "To"
+msgstr "変換先"
+
+# Settings
+msgid "Customize application settings"
+msgstr "アプリケーション設定を変更します"
+
+msgid "Language"
+msgstr "言語"
+
+# Navigation (additional items)
+msgid "Base64"
+msgstr "Base64"
+
+msgid "HTML"
+msgstr "HTML"
+
+msgid "Info"
+msgstr "情報"
+
+msgid "Calculator"
+msgstr "計算機"
+
+msgid "Vector Calc"
+msgstr "ベクトル計算"
+
+msgid "Lorem Ipsum"
+msgstr "Lorem Ipsum"
+
+msgid "UUID"
+msgstr "UUID"
+
+msgid "Random"
+msgstr "ランダム"
+
+msgid "Regex"
+msgstr "正規表現"
+
+msgid "Text Diff"
+msgstr "テキスト比較"
+
+msgid "CRON"
+msgstr "CRON"
+
+msgid "QR Code"
+msgstr "QRコード"
+
+# Number Base (additional)
+msgid "ASCII"
+msgstr "ASCII"
+
+msgid "UTF-8"
+msgstr "UTF-8"
+
+# Unit Converter (additional)
+msgid "Byte / Data Size"
+msgstr "バイト / データサイズ"
+
+msgid "Convert between decimal (SI) and binary (IEC) units"
+msgstr "SI（10進数）とIEC（2進数）の単位を変換します"
+
+# System Info (additional)
+msgid "Distribution"
+msgstr "ディストリビューション"
+
+msgid "Hardware"
+msgstr "ハードウェア"
+
+msgid "CPU"
+msgstr "CPU"
+
+msgid "RAM"
+msgstr "RAM"
+
+msgid "GPU"
+msgstr "GPU"
+
+msgid "Kernel"
+msgstr "カーネル"
+
+# Chmod (additional)
+msgid "Sticky"
+msgstr "スティッキー"
+
+# Info / About
+msgid "About"
+msgstr "アプリ情報"
+
+msgid "Developer toolbox built with Rust and Slint"
+msgstr "RustとSlintで構築された開発者ツールボックス"
+
+msgid "License"
+msgstr "ライセンス"
+
+msgid "Third-Party Dependencies"
+msgstr "サードパーティ依存関係"
+
+msgid "Version"
+msgstr "バージョン"
+
+msgid "Package"
+msgstr "パッケージ"
+
+msgid "Description"
+msgstr "説明"
+
+# Calculator
+msgid "Scientific calculator with expression AST visualization"
+msgstr "式のAST可視化付き科学計算機"
+
+msgid "Expression Tree"
+msgstr "式ツリー"
+
+msgid "Evaluate an expression to see the AST"
+msgstr "式を入力してASTを確認"
+
+# Vector Calculator
+msgid "Vector Calculator"
+msgstr "ベクトル計算機"
+
+msgid "2D/3D vector operations with canvas visualization"
+msgstr "キャンバス可視化付き2D/3Dベクトル演算"
+
+msgid "Vector A"
+msgstr "ベクトルA"
+
+msgid "Vector B"
+msgstr "ベクトルB"
+
+msgid "Angle"
+msgstr "角度"
+
+msgid "Length:"
+msgstr "長さ:"
+
+msgid "Angle A,B:"
+msgstr "角度A,B:"
+
+msgid "Dot A·B:"
+msgstr "内積A·B:"
+
+msgid "Dot Product (A · B)"
+msgstr "内積 (A · B)"
+
+msgid "Cross Product (A × B)"
+msgstr "外積 (A × B)"
+
+msgid "Add (A + B)"
+msgstr "加算 (A + B)"
+
+msgid "Subtract (A − B)"
+msgstr "減算 (A − B)"
+
+msgid "Scale A"
+msgstr "スケールA"
+
+msgid "Normalize A"
+msgstr "正規化A"
+
+msgid "Lerp"
+msgstr "補間"
+
+msgid "Reflect (A off normal B)"
+msgstr "反射 (法線BでAを反射)"
+
+msgid "Normal vector (B)"
+msgstr "法線ベクトル (B)"
+
+msgid "Normalized A:"
+msgstr "正規化A:"
+
+msgid "Distance"
+msgstr "距離"
+
+msgid "Operation"
+msgstr "演算"
+
+msgid "Scalar"
+msgstr "スカラー"
+
+msgid "t"
+msgstr "t"
+
+msgid "Calculate"
+msgstr "計算"
+
+msgid "Copy First"
+msgstr "最初をコピー"
+
+msgid "View:"
+msgstr "表示:"
+
+msgid "Unit"
+msgstr "単位"
+
+# Lorem Ipsum Generator
+msgid "Lorem Ipsum Generator"
+msgstr "Lorem Ipsum生成"
+
+msgid "Generate placeholder text by words, sentences, or paragraphs"
+msgstr "単語・文・段落でダミーテキストを生成します"
+
+msgid "Words"
+msgstr "単語"
+
+msgid "Sentences"
+msgstr "文"
+
+msgid "Paragraphs"
+msgstr "段落"
+
+msgid "Count"
+msgstr "個数"
+
+msgid "Classic opening"
+msgstr "クラシック冒頭"
+
+msgid "Generate"
+msgstr "生成"
+
+msgid "Generated text will appear here..."
+msgstr "生成されたテキストがここに表示されます..."
+
+# UUID Generator
+msgid "UUID Generator"
+msgstr "UUID生成"
+
+msgid "Generate universally unique identifiers, versions 1–7"
+msgstr "バージョン1〜7の汎用一意識別子を生成します"
+
+msgid "Namespace"
+msgstr "名前空間"
+
+msgid "v1 – Timestamp + MAC"
+msgstr "v1 – タイムスタンプ + MAC"
+
+msgid "v3 – MD5 name-based"
+msgstr "v3 – MD5名前ベース"
+
+msgid "v4 – Random"
+msgstr "v4 – ランダム"
+
+msgid "v5 – SHA-1 name-based"
+msgstr "v5 – SHA-1名前ベース"
+
+msgid "v6 – Reordered timestamp"
+msgstr "v6 – 再順序化タイムスタンプ"
+
+msgid "v7 – Unix timestamp + random"
+msgstr "v7 – Unixタイムスタンプ + ランダム"
+
+msgid "Generated UUIDs will appear here..."
+msgstr "生成されたUUIDがここに表示されます..."
+
+msgid "e.g. example.com"
+msgstr "例: example.com"
+
+msgid "Name"
+msgstr "名前"
+
+# Random Generator
+msgid "Random Generator"
+msgstr "ランダム生成器"
+
+msgid "Generate random text strings and numbers"
+msgstr "ランダムな文字列と数値を生成します"
+
+msgid "Character set"
+msgstr "文字セット"
+
+msgid "Integer"
+msgstr "整数"
+
+msgid "Float"
+msgstr "浮動小数点"
+
+msgid "Min"
+msgstr "最小"
+
+msgid "Max"
+msgstr "最大"
+
+msgid "Decimal places"
+msgstr "小数点以下の桁数"
+
+msgid "Uppercase A-Z"
+msgstr "大文字A-Z"
+
+msgid "Lowercase a-z"
+msgstr "小文字a-z"
+
+msgid "Digits 0-9"
+msgstr "数字0-9"
+
+msgid "Generated values will appear here..."
+msgstr "生成された値がここに表示されます..."
+
+msgid "Number"
+msgstr "数値"
+
+msgid "Text"
+msgstr "テキスト"
+
+# Regex Tester
+msgid "Regex Tester"
+msgstr "正規表現テスター"
+
+msgid "Test regular expressions against text with match and replace support"
+msgstr "マッチと置換をサポートした正規表現テストツール"
+
+msgid "Pattern"
+msgstr "パターン"
+
+msgid "Enter regex pattern…"
+msgstr "正規表現パターンを入力…"
+
+msgid "(?i)"
+msgstr "(?i)"
+
+msgid "(?m)"
+msgstr "(?m)"
+
+msgid "(?s)"
+msgstr "(?s)"
+
+msgid "Test Input"
+msgstr "テスト入力"
+
+msgid "Paste text to match against…"
+msgstr "照合するテキストを貼り付け…"
+
+msgid "Mode"
+msgstr "モード"
+
+msgid "Match"
+msgstr "マッチ"
+
+msgid "Replace"
+msgstr "置換"
+
+msgid "Replacement"
+msgstr "置換文字列"
+
+msgid "e.g. $1_$2"
+msgstr "例: $1_$2"
+
+msgid "Results will appear here…"
+msgstr "結果がここに表示されます…"
+
+msgid "Run"
+msgstr "実行"
+
+msgid "Input"
+msgstr "入力"
+
+# Text Differ
+msgid "Text Differ"
+msgstr "テキスト差分"
+
+msgid "Compare two text inputs and view the unified diff"
+msgstr "2つのテキストを比較してUnified Diffを表示します"
+
+msgid "Original"
+msgstr "元のテキスト"
+
+msgid "Modified"
+msgstr "変更後"
+
+msgid "Paste original text here…"
+msgstr "元のテキストを貼り付け…"
+
+msgid "Paste modified text here…"
+msgstr "変更後のテキストを貼り付け…"
+
+msgid "Compare"
+msgstr "比較"
+
+msgid "Copy Diff"
+msgstr "差分をコピー"
+
+# CRON Parser / Generator
+msgid "CRON Parser / Generator"
+msgstr "CRONパーサー / ジェネレーター"
+
+msgid "Parse expressions and preview upcoming execution times"
+msgstr "CRON式を解析し次の実行時刻をプレビューします"
+
+msgid "Expression"
+msgstr "式"
+
+msgid "Parse"
+msgstr "解析"
+
+msgid "Next 10 Executions (UTC)"
+msgstr "次の10回の実行 (UTC)"
+
+msgid "Builder"
+msgstr "ビルダー"
+
+msgid "Generate Expression"
+msgstr "式を生成"
+
+msgid "Minute"
+msgstr "分"
+
+msgid "Hour"
+msgstr "時"
+
+msgid "Day"
+msgstr "日"
+
+msgid "Month"
+msgstr "月"
+
+msgid "Weekday"
+msgstr "曜日"
+
+# QR Code Generator
+msgid "QR Code Generator"
+msgstr "QRコード生成器"
+
+msgid "Encode text or URLs as a QR code image"
+msgstr "テキストやURLをQRコード画像としてエンコードします"
+
+msgid "Enter text or URL…"
+msgstr "テキストまたはURLを入力…"
+
+msgid "Error Correction"
+msgstr "誤り訂正"
+
+msgid "Save PNG"
+msgstr "PNGで保存"
+
+msgid "Copy Image"
+msgstr "画像をコピー"
+
+msgid "QR code will appear here"
+msgstr "QRコードがここに表示されます"

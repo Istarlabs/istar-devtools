@@ -1,0 +1,179 @@
+import { Button, ScrollView } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { AdvancedTextEdit } from "../components/advanced-text-edit.slint";
+import { MarkdownState } from "../globals.slint";
+import { MdBlock } from "../types.slint";
+import { Theme } from "../theme.slint";
+
+component BlockView inherits VerticalLayout {
+    in property <MdBlock> block;
+
+    // 0=paragraph 1=heading 2=code 3=quote 4=list item 5=rule 6=table row
+    if block.kind == 0: Text {
+        text: block.text;
+        font-size: Theme.font-md;
+        color: #d8d8d8;
+        wrap: word-wrap;
+    }
+
+    if block.kind == 1: Text {
+        text: block.text;
+        font-size: block.level == 1 ? 28px : block.level == 2 ? 22px : block.level == 3 ? 18px : block.level == 4 ? 16px : 14px;
+        font-weight: 700;
+        color: #f0f0f0;
+        wrap: word-wrap;
+    }
+
+    if block.kind == 2: Rectangle {
+        background: #151515;
+        border-radius: 6px;
+
+        VerticalLayout {
+            padding: Theme.space-md;
+
+            Text {
+                text: block.text;
+                font-family: "monospace";
+                font-size: Theme.font-sm;
+                color: #c8e0c8;
+                wrap: word-wrap;
+            }
+        }
+    }
+
+    if block.kind == 3: HorizontalLayout {
+        spacing: Theme.space-sm;
+        padding-left: (block.level - 1) * 14px;
+
+        Rectangle {
+            width: 3px;
+            background: Theme.color-subtle;
+        }
+        Text {
+            text: block.text;
+            font-size: Theme.font-md;
+            font-italic: true;
+            color: Theme.color-muted;
+            wrap: word-wrap;
+            horizontal-stretch: 1;
+        }
+    }
+
+    if block.kind == 4: HorizontalLayout {
+        padding-left: block.level * 20px;
+
+        Text {
+            text: block.text;
+            font-size: Theme.font-md;
+            color: #d8d8d8;
+            wrap: word-wrap;
+            horizontal-stretch: 1;
+        }
+    }
+
+    if block.kind == 5: Rectangle {
+        height: 1px;
+        background: Theme.color-subtle;
+    }
+
+    if block.kind == 6: Text {
+        text: block.text;
+        font-family: "monospace";
+        font-size: Theme.font-sm;
+        font-weight: block.level == 1 ? 700 : 400;
+        color: block.level == 1 ? #f0f0f0 : #d8d8d8;
+        wrap: word-wrap;
+    }
+}
+
+export component MarkdownPage inherits PageContainer {
+    title-text: @tr("Markdown");
+    subtitle-text: @tr("Write Markdown and preview it");
+
+    HorizontalLayout {
+        spacing: Theme.space-sm;
+        alignment: end;
+
+        Button {
+            text: @tr("Open file");
+            clicked => {
+                MarkdownState.open-file();
+            }
+        }
+        Button {
+            text: @tr("Paste");
+            clicked => {
+                MarkdownState.paste-input();
+            }
+        }
+        Button {
+            text: @tr("Copy HTML");
+            clicked => {
+                MarkdownState.copy-html();
+            }
+        }
+        Button {
+            text: @tr("Open in browser");
+            primary: true;
+            clicked => {
+                MarkdownState.open-in-browser();
+            }
+        }
+    }
+
+    HorizontalLayout {
+        spacing: Theme.space-md;
+        vertical-stretch: 1;
+
+        VerticalLayout {
+            spacing: Theme.space-xs;
+            horizontal-stretch: 1;
+
+            Text {
+                text: "Markdown";
+                font-size: Theme.font-sm;
+                color: Theme.color-muted;
+            }
+
+            AdvancedTextEdit {
+                text <=> MarkdownState.input;
+                font-family: "monospace";
+                font-size: Theme.font-sm;
+                vertical-stretch: 1;
+                edited(_) => {
+                    MarkdownState.render();
+                }
+            }
+        }
+
+        VerticalLayout {
+            spacing: Theme.space-xs;
+            horizontal-stretch: 1;
+
+            Text {
+                text: @tr("Preview (bold and italic are shown in the browser view)");
+                font-size: Theme.font-sm;
+                color: Theme.color-muted;
+            }
+
+            Rectangle {
+                background: Theme.color-surface;
+                border-radius: 6px;
+                vertical-stretch: 1;
+                clip: true;
+
+                ScrollView {
+                    VerticalLayout {
+                        padding: Theme.space-md;
+                        spacing: Theme.space-sm;
+                        alignment: start;
+
+                        for block in MarkdownState.blocks: BlockView {
+                            block: block;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

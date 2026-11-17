@@ -1,0 +1,137 @@
+import { ScrollView } from "std-widgets.slint";
+import { AppPages, NavItem } from "types.slint";
+import { IconSet, Icon, IconDisplay } from "@lucide";
+import { NavSearch } from "globals.slint";
+import { Theme } from "theme.slint";
+
+export component SideMenu inherits Rectangle {
+    in property <length> base-width: 50px;
+    in-out property <bool> collapsed: false;
+    in property <[NavItem]> model;
+    in property <length> expanded-width: 250px;
+    // Extra room on the right edge so the ListView scrollbar does not overlap the icons when collapsed.
+    in property <length> collapsed-width: base-width + Theme.space-md;
+    callback activated(AppPages);
+
+    width: collapsed ? collapsed-width : expanded-width;
+    vertical-stretch: 1;
+
+    animate width {
+        duration: 100ms;
+        easing: ease;
+    }
+
+    background: Theme.color-surface;
+    clip: true;
+
+    VerticalLayout {
+        spacing: Theme.space-xs;
+        padding: Theme.space-xs;
+
+        Rectangle {
+            height: base-width;
+            IconDisplay {
+                icon: IconSet.Menu;
+                x: Theme.space-xs;
+                height: base-width - Theme.space-md;
+                width: base-width - Theme.space-md;
+            }
+
+            TouchArea {
+                clicked => {
+                    collapsed = !collapsed;
+                }
+            }
+        }
+
+        ScrollView {
+            vertical-stretch: 1;
+
+            VerticalLayout {
+                for item[idx] in model: VerticalLayout {
+                    // Group headers only in the unfiltered list; a search shows a flat list.
+                    if NavSearch.query == "" && idx > 0 && model[idx - 1].group != item.group: Rectangle {
+                        height: collapsed ? Theme.space-lg : 32px;
+
+                        if collapsed: Rectangle {
+                            y: (parent.height - self.height) / 2;
+                            height: 1px;
+                            width: base-width - Theme.space-md;
+                            x: Theme.space-xs;
+                            background: Theme.color-subtle;
+                        }
+
+                        if !collapsed: IconDisplay {
+                            icon: NavSearch.is-collapsed(item.group, NavSearch.collapsed) ? IconSet.ChevronRight : IconSet.ChevronDown;
+                            x: Theme.space-xs;
+                            y: parent.height - self.height - Theme.space-xs;
+                            height: 14px;
+                            width: 14px;
+                        }
+
+                        if !collapsed: Text {
+                            x: Theme.space-xs + 14px + Theme.space-xs;
+                            y: parent.height - self.height - Theme.space-xs;
+                            width: parent.width - self.x;
+                            text: item.group;
+                            font-size: Theme.font-xs;
+                            font-weight: 700;
+                            color: Theme.color-muted;
+                            overflow: elide;
+                        }
+
+                        TouchArea {
+                            clicked => {
+                                NavSearch.toggle-group(item.group);
+                            }
+                        }
+                    }
+
+                    if NavSearch.query == "" ? !NavSearch.is-collapsed(item.group, NavSearch.collapsed) : NavSearch.matches(NavSearch.query, item.text + " " + item.group + " " + item.tags): Rectangle {
+                        height: base-width;
+                        property <color> fg: ta.pressed ? Theme.color-nav-item-pressed : ta.has-hover ? Theme.color-nav-item-hover : Theme.color-nav-item;
+
+                        IconDisplay {
+                            icon: item.image;
+                            x: Theme.space-xs;
+                            height: base-width - Theme.space-md;
+                            width: base-width - Theme.space-md;
+                        }
+
+                        Text {
+                            x: base-width;
+                            width: parent.width - base-width;
+                            text: item.text;
+                            font-size: base-width * 0.35;
+                            color: parent.fg;
+                            horizontal-alignment: left;
+                            vertical-alignment: center;
+                        }
+
+                        ta := TouchArea {
+                            clicked => {
+                                activated(item.page);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            height: base-width;
+            IconDisplay {
+                icon: collapsed ? IconSet.ChevronRight : IconSet.ChevronLeft;
+                x: Theme.space-xs;
+                height: base-width - Theme.space-md;
+                width: base-width - Theme.space-md;
+            }
+
+            TouchArea {
+                clicked => {
+                    collapsed = !collapsed;
+                }
+            }
+        }
+    }
+}

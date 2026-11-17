@@ -1,0 +1,211 @@
+import { ComboBox, LineEdit, Button, CheckBox } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { SeparatorLine } from "../components/separator-line.slint";
+import { AdvancedTextEdit } from "../components/advanced-text-edit.slint";
+import { RandomGeneratorState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+component ModeButton {
+    in property <string> label;
+    in property <bool> selected;
+    callback clicked();
+
+    min-width: 80px;
+    height: 32px;
+
+    bg := Rectangle {
+        border-radius: 4px;
+        background: root.selected ? #2d5a8e : #252525;
+        border-width: 1px;
+        border-color: root.selected ? transparent : #333333;
+
+        ta := TouchArea {
+            mouse-cursor: pointer;
+            clicked => { root.clicked(); }
+        }
+
+        Text {
+            text: root.label;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+            color: root.selected ? #e0e0e0 : Theme.color-muted;
+            font-size: Theme.font-sm;
+        }
+    }
+
+    states [
+        hovered when ta.has-hover && !root.selected: {
+            bg.background: #353535;
+        }
+    ]
+}
+
+export component RandomGeneratorPage inherits PageContainer {
+    title-text: @tr("Random Generator");
+    subtitle-text: @tr("Generate random text strings and numbers");
+
+    HorizontalLayout {
+        spacing: Theme.space-sm;
+        alignment: start;
+
+        ModeButton {
+            label: @tr("Text");
+            selected: RandomGeneratorState.mode-index == 0;
+            clicked => { RandomGeneratorState.mode-index = 0; }
+        }
+
+        ModeButton {
+            label: @tr("Number");
+            selected: RandomGeneratorState.mode-index == 1;
+            clicked => { RandomGeneratorState.mode-index = 1; }
+        }
+    }
+
+    SeparatorLine { }
+
+    if RandomGeneratorState.mode-index == 0:
+    VerticalLayout {
+        spacing: Theme.space-md;
+
+        HorizontalLayout {
+            spacing: Theme.space-md;
+            alignment: start;
+
+            Text { text: @tr("Length"); vertical-alignment: center; }
+            LineEdit {
+                text <=> RandomGeneratorState.text-length;
+                width: 80px;
+            }
+
+            Text { text: @tr("Count"); vertical-alignment: center; }
+            LineEdit {
+                text <=> RandomGeneratorState.text-count;
+                width: 80px;
+            }
+        }
+
+        Text {
+            text: @tr("Character set");
+            font-size: Theme.font-sm;
+            color: Theme.color-muted;
+        }
+
+        HorizontalLayout {
+            spacing: Theme.space-lg;
+            alignment: start;
+
+            CheckBox {
+                text: @tr("Uppercase A-Z");
+                checked <=> RandomGeneratorState.use-uppercase;
+            }
+
+            CheckBox {
+                text: @tr("Lowercase a-z");
+                checked <=> RandomGeneratorState.use-lowercase;
+            }
+
+            CheckBox {
+                text: @tr("Digits 0-9");
+                checked <=> RandomGeneratorState.use-digits;
+            }
+
+            CheckBox {
+                text: @tr("Special !\"#$%...");
+                checked <=> RandomGeneratorState.use-special;
+            }
+        }
+    }
+
+    if RandomGeneratorState.mode-index == 1:
+    VerticalLayout {
+        spacing: Theme.space-md;
+
+        HorizontalLayout {
+            spacing: Theme.space-sm;
+            alignment: start;
+
+            ModeButton {
+                label: @tr("Integer");
+                selected: RandomGeneratorState.number-type-index == 0;
+                clicked => { RandomGeneratorState.number-type-index = 0; }
+            }
+
+            ModeButton {
+                label: @tr("Float");
+                selected: RandomGeneratorState.number-type-index == 1;
+                clicked => { RandomGeneratorState.number-type-index = 1; }
+            }
+        }
+
+        HorizontalLayout {
+            spacing: Theme.space-md;
+            alignment: start;
+
+            Text { text: @tr("Count"); vertical-alignment: center; }
+            LineEdit {
+                text <=> RandomGeneratorState.number-count;
+                width: 80px;
+            }
+
+            Text { text: @tr("Min"); vertical-alignment: center; }
+            LineEdit {
+                text <=> RandomGeneratorState.num-min;
+                width: 120px;
+            }
+
+            Text { text: @tr("Max"); vertical-alignment: center; }
+            LineEdit {
+                text <=> RandomGeneratorState.num-max;
+                width: 120px;
+            }
+
+            if RandomGeneratorState.number-type-index == 1:
+            Text { text: @tr("Decimal places"); vertical-alignment: center; }
+
+            if RandomGeneratorState.number-type-index == 1:
+            LineEdit {
+                text <=> RandomGeneratorState.decimal-places;
+                width: 60px;
+            }
+        }
+    }
+
+    if !RandomGeneratorState.error.is-empty:
+    Text {
+        text: RandomGeneratorState.error;
+        font-size: Theme.font-sm;
+        color: #e05050;
+    }
+
+    HorizontalLayout {
+        alignment: start;
+
+        Button {
+            text: @tr("Generate");
+            primary: true;
+            clicked => {
+                RandomGeneratorState.generate();
+            }
+        }
+    }
+
+    SeparatorLine { }
+
+    AdvancedTextEdit {
+        text <=> RandomGeneratorState.output;
+        read-only: true;
+        placeholder-text: @tr("Generated values will appear here...");
+        vertical-stretch: 1;
+    }
+
+    HorizontalLayout {
+        alignment: end;
+
+        Button {
+            text: @tr("Copy");
+            clicked => {
+                RandomGeneratorState.copy-output();
+            }
+        }
+    }
+}

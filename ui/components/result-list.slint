@@ -1,0 +1,53 @@
+import { Button, ScrollView } from "std-widgets.slint";
+import { ResultRow } from "../types.slint";
+import { Theme } from "../theme.slint";
+
+// Label / value rows with a copy button each. The value is selectable.
+export component ResultList inherits ScrollView {
+    in property <[ResultRow]> rows;
+    callback copy-clicked(string);
+
+    VerticalLayout {
+        spacing: Theme.space-xs;
+
+        for row in root.rows: Rectangle {
+            background: Theme.color-surface;
+            border-radius: 6px;
+            height: 40px;
+
+            HorizontalLayout {
+                padding-left: Theme.space-md;
+                padding-right: Theme.space-sm;
+                padding-top: Theme.space-xs;
+                padding-bottom: Theme.space-xs;
+                spacing: Theme.space-md;
+
+                Text {
+                    text: row.label;
+                    font-size: Theme.font-sm;
+                    color: Theme.color-muted;
+                    vertical-alignment: center;
+                    min-width: 140px;
+                    horizontal-stretch: 0;
+                }
+
+                TextInput {
+                    text: row.value;
+                    read-only: true;
+                    font-family: "monospace";
+                    font-size: Theme.font-sm;
+                    color: #e0e0e0;
+                    vertical-alignment: center;
+                    horizontal-stretch: 1;
+                }
+
+                Button {
+                    text: @tr("Copy");
+                    clicked => {
+                        root.copy-clicked(row.value);
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,44 @@
+import { Switch } from "std-widgets.slint";
+import { SeparatorLine } from "../components/separator-line.slint";
+import { HtmlEncodeDecodeState } from "../globals.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { InputOutputPanel } from "../components/input-output-panel.slint";
+import { Theme } from "../theme.slint";
+
+export component HtmlEncodeDecode inherits PageContainer {
+    title-text: @tr("HTML Encode & Decode");
+    subtitle-text: @tr("Encode and decode HTML entities");
+
+    HorizontalLayout {
+        spacing: Theme.space-sm;
+        alignment: start;
+
+        Text {
+            text: HtmlEncodeDecodeState.encode-mode ? @tr("Encoding") : @tr("Decoding");
+            vertical-alignment: center;
+        }
+
+        Switch {
+            checked <=> HtmlEncodeDecodeState.encode-mode;
+            toggled => {
+                HtmlEncodeDecodeState.convert();
+            }
+        }
+    }
+
+    SeparatorLine { }
+
+    InputOutputPanel {
+        input-text <=> HtmlEncodeDecodeState.input;
+        output-text <=> HtmlEncodeDecodeState.output;
+        open-file => {
+            HtmlEncodeDecodeState.open-from-file();
+        }
+        paste => {
+            HtmlEncodeDecodeState.paste-input();
+        }
+        copy => {
+            HtmlEncodeDecodeState.copy-output();
+        }
+    }
+}

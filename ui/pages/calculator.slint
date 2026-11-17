@@ -1,0 +1,257 @@
+import { ListView } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { CalculatorState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+component CalcButton {
+    in property <string> label;
+    in property <bool> is-operator: false;
+    in property <bool> is-function: false;
+    in property <bool> is-control: false;
+    in property <bool> is-equals: false;
+    callback clicked();
+
+    min-height: 52px;
+    horizontal-stretch: 1;
+
+    bg := Rectangle {
+        border-radius: 5px;
+        background: root.is-equals  ? #2d5a8e :
+                    root.is-control ? #6b2d2d :
+                    root.is-operator ? #2a3a4a :
+                    root.is-function ? #2a2a3d :
+                    #252525;
+
+        ta := TouchArea {
+            mouse-cursor: pointer;
+            clicked => { root.clicked(); }
+        }
+
+        Text {
+            text: root.label;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+            color: #e0e0e0;
+            font-size: Theme.font-sm;
+        }
+    }
+
+    states [
+        pressed when ta.pressed: {
+            bg.background: root.is-equals  ? #1d4a7e :
+                           root.is-control ? #5b1d1d :
+                           root.is-operator ? #1a2a3a :
+                           root.is-function ? #1a1a2d :
+                           #151515;
+        }
+        hovered when ta.has-hover: {
+            bg.background: root.is-equals  ? #3d6a9e :
+                           root.is-control ? #7b3d3d :
+                           root.is-operator ? #3a4a5a :
+                           root.is-function ? #3a3a4d :
+                           #353535;
+        }
+    ]
+}
+
+export component CalculatorPage inherits PageContainer {
+    title-text: @tr("Calculator");
+    subtitle-text: @tr("Scientific calculator with expression AST visualization");
+
+    init => { fs.focus(); }
+
+    fs := FocusScope {
+        preferred-height: 0;
+        key-pressed(event) => {
+            if event.text == Key.Return {
+                CalculatorState.calculate();
+                return accept;
+            }
+            if event.text == Key.Backspace {
+                CalculatorState.backspace();
+                return accept;
+            }
+            if event.text == Key.Delete || event.text == Key.Escape {
+                CalculatorState.clear();
+                return accept;
+            }
+            if event.text == "=" {
+                CalculatorState.calculate();
+                return accept;
+            }
+            if event.text != "" {
+                CalculatorState.keyboard-input(event.text);
+                return accept;
+            }
+            reject
+        }
+    }
+
+    // Display
+    Rectangle {
+        height: 90px;
+        background: #141414;
+        border-radius: 8px;
+
+        // right-click → copy display
+        display-ta := TouchArea {
+            pointer-event(e) => {
+                if e.kind == PointerEventKind.up && e.button == PointerEventButton.right {
+                    CalculatorState.copy-display();
+                }
+            }
+        }
+
+        VerticalLayout {
+            padding: Theme.space-md;
+            spacing: 2px;
+            alignment: end;
+
+            Text {
+                text: CalculatorState.expression == "" ? "0" : CalculatorState.expression;
+                horizontal-alignment: right;
+                color: Theme.color-muted;
+                font-size: Theme.font-md;
+                overflow: elide;
+            }
+
+            Text {
+                text: CalculatorState.result;
+                horizontal-alignment: right;
+                font-size: Theme.font-xl;
+                color: CalculatorState.is-error ? #e05050 : #e8e8e8;
+                overflow: elide;
+            }
+        }
+    }
+
+    // Body: buttons + AST
+    HorizontalLayout {
+        spacing: Theme.space-xl;
+        vertical-stretch: 1;
+
+        // ── Button grid (5 columns) ──────────────────────────────
+        VerticalLayout {
+            spacing: 4px;
+            horizontal-stretch: 1;
+            min-width: 360px;
+
+            // Row 1 – trig functions + clear + backspace
+            HorizontalLayout {
+                spacing: 4px;
+                CalcButton { label: "sin(";  is-function: true;  clicked => { CalculatorState.append("sin("); } }
+                CalcButton { label: "cos(";  is-function: true;  clicked => { CalculatorState.append("cos("); } }
+                CalcButton { label: "tan(";  is-function: true;  clicked => { CalculatorState.append("tan("); } }
+                CalcButton { label: "C";     is-control: true;   clicked => { CalculatorState.clear(); } }
+                CalcButton { label: "⌫";    is-control: true;   clicked => { CalculatorState.backspace(); } }
+            }
+            // Row 2 – more functions + parentheses
+            HorizontalLayout {
+                spacing: 4px;
+                CalcButton { label: "sqrt("; is-function: true;  clicked => { CalculatorState.append("sqrt("); } }
+                CalcButton { label: "ln(";   is-function: true;  clicked => { CalculatorState.append("ln("); } }
+                CalcButton { label: "log(";  is-function: true;  clicked => { CalculatorState.append("log("); } }
+                CalcButton { label: "(";     is-operator: true;  clicked => { CalculatorState.append("("); } }
+                CalcButton { label: ")";     is-operator: true;  clicked => { CalculatorState.append(")"); } }
+            }
+            // Row 3 – factorial + constants + power + modulo
+            HorizontalLayout {
+                spacing: 4px;
+                CalcButton { label: "fact("; is-function: true;  clicked => { CalculatorState.append("fact("); } }
+                CalcButton { label: "PI";    is-function: true;  clicked => { CalculatorState.append("PI"); } }
+                CalcButton { label: "E";     is-function: true;  clicked => { CalculatorState.append("E"); } }
+                CalcButton { label: "^";     is-operator: true;  clicked => { CalculatorState.append("^"); } }
+                CalcButton { label: "%";     is-operator: true;  clicked => { CalculatorState.append("%"); } }
+            }
+            // Row 4 – 7 8 9 / *
+            HorizontalLayout {
+                spacing: 4px;
+                CalcButton { label: "7"; clicked => { CalculatorState.append("7"); } }
+                CalcButton { label: "8"; clicked => { CalculatorState.append("8"); } }
+                CalcButton { label: "9"; clicked => { CalculatorState.append("9"); } }
+                CalcButton { label: "/"; is-operator: true; clicked => { CalculatorState.append("/"); } }
+                CalcButton { label: "*"; is-operator: true; clicked => { CalculatorState.append("*"); } }
+            }
+            // Row 5 – 4 5 6 - +
+            HorizontalLayout {
+                spacing: 4px;
+                CalcButton { label: "4"; clicked => { CalculatorState.append("4"); } }
+                CalcButton { label: "5"; clicked => { CalculatorState.append("5"); } }
+                CalcButton { label: "6"; clicked => { CalculatorState.append("6"); } }
+                CalcButton { label: "-"; is-operator: true; clicked => { CalculatorState.append("-"); } }
+                CalcButton { label: "+"; is-operator: true; clicked => { CalculatorState.append("+"); } }
+            }
+            // Row 6 – 1 2 3 . ±
+            HorizontalLayout {
+                spacing: 4px;
+                CalcButton { label: "1"; clicked => { CalculatorState.append("1"); } }
+                CalcButton { label: "2"; clicked => { CalculatorState.append("2"); } }
+                CalcButton { label: "3"; clicked => { CalculatorState.append("3"); } }
+                CalcButton { label: "."; is-operator: true; clicked => { CalculatorState.append("."); } }
+                CalcButton { label: "±"; is-operator: true; clicked => { CalculatorState.append("-"); } }
+            }
+            // Row 7 – 0 (wide) ^2 =
+            HorizontalLayout {
+                spacing: 4px;
+                CalcButton { label: "0";  horizontal-stretch: 3; clicked => { CalculatorState.append("0"); } }
+                CalcButton { label: "^2"; is-operator: true; horizontal-stretch: 1; clicked => { CalculatorState.append("^2"); } }
+                CalcButton { label: "=";  is-equals: true;   horizontal-stretch: 1; clicked => { CalculatorState.calculate(); } }
+            }
+        }
+
+        // ── AST panel ────────────────────────────────────────────
+        VerticalLayout {
+            spacing: Theme.space-sm;
+            horizontal-stretch: 0;
+            min-width: 240px;
+            max-width: 300px;
+
+            Text {
+                text: @tr("Expression Tree");
+                font-size: Theme.font-sm;
+                color: Theme.color-muted;
+            }
+
+            Rectangle {
+                background: #141414;
+                border-radius: 8px;
+                vertical-stretch: 1;
+                clip: true;
+
+                if !CalculatorState.has-ast: Text {
+                    text: @tr("Evaluate an expression to see the AST");
+                    color: Theme.color-subtle;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                    font-size: Theme.font-sm;
+                }
+
+                if CalculatorState.has-ast: ListView {
+                    for node in CalculatorState.ast-nodes: Rectangle {
+                        height: 22px;
+
+                        // right-click on any row → copy whole tree
+                        row-ta := TouchArea {
+                            pointer-event(e) => {
+                                if e.kind == PointerEventKind.up && e.button == PointerEventButton.right {
+                                    CalculatorState.copy-ast();
+                                }
+                            }
+                        }
+
+                        HorizontalLayout {
+                            padding-left: node.depth * 16px;
+                            Text {
+                                text: node.label;
+                                vertical-alignment: center;
+                                color: #c0c0c0;
+                                font-size: Theme.font-sm;
+                                overflow: elide;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

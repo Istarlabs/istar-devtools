@@ -1,0 +1,94 @@
+import { Button, ComboBox } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { ResultList } from "../components/result-list.slint";
+import { AdvancedTextEdit } from "../components/advanced-text-edit.slint";
+import { UrlState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+export component UrlPage inherits PageContainer {
+    title-text: @tr("URL");
+    subtitle-text: @tr("Percent-encode, decode and parse URLs");
+
+    HorizontalLayout {
+        spacing: Theme.space-sm;
+
+        ComboBox {
+            model: [@tr("Encode component"), @tr("Encode URL"), @tr("Decode"), @tr("Decode form data (+ = space)"), @tr("Parse URL")];
+            current-index <=> UrlState.mode-index;
+            selected(_) => {
+                UrlState.convert();
+            }
+        }
+
+        Rectangle { horizontal-stretch: 1; }
+
+        Button {
+            text: @tr("Paste");
+            clicked => {
+                UrlState.paste-input();
+            }
+        }
+    }
+
+    Text {
+        text: @tr("Input");
+        font-size: Theme.font-sm;
+        color: Theme.color-muted;
+    }
+
+    AdvancedTextEdit {
+        text <=> UrlState.input;
+        font-family: "monospace";
+        font-size: Theme.font-sm;
+        min-height: 90px;
+        vertical-stretch: UrlState.mode-index == 4 ? 0 : 1;
+        edited(_) => {
+            UrlState.convert();
+        }
+    }
+
+    if !UrlState.error.is-empty: Text {
+        text: UrlState.error;
+        font-size: Theme.font-sm;
+        color: #e05050;
+        wrap: word-wrap;
+    }
+
+    if UrlState.mode-index != 4: VerticalLayout {
+        spacing: Theme.space-xs;
+        vertical-stretch: 1;
+
+        HorizontalLayout {
+            Text {
+                text: @tr("Output");
+                font-size: Theme.font-sm;
+                color: Theme.color-muted;
+                vertical-alignment: center;
+                horizontal-stretch: 1;
+            }
+            Button {
+                text: @tr("Copy");
+                enabled: !UrlState.output.is-empty;
+                clicked => {
+                    UrlState.copy-output();
+                }
+            }
+        }
+
+        AdvancedTextEdit {
+            text: UrlState.output;
+            read-only: true;
+            font-family: "monospace";
+            font-size: Theme.font-sm;
+            vertical-stretch: 1;
+        }
+    }
+
+    if UrlState.mode-index == 4: ResultList {
+        rows: UrlState.rows;
+        vertical-stretch: 1;
+        copy-clicked(text) => {
+            UrlState.copy(text);
+        }
+    }
+}

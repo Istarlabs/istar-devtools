@@ -1,0 +1,26 @@
+import { Theme } from "../theme.slint";
+import { SeparatorLine } from "separator-line.slint";
+
+// Pages that need scrollable content wrap their own body in a Flickable/ScrollView.
+export component PageContainer inherits VerticalLayout {
+    in property <string> title-text;
+    in property <string> subtitle-text;
+
+    padding: Theme.space-lg;
+    spacing: Theme.space-md;
+
+    Text {
+        text: title-text;
+        font-size: Theme.font-xl;
+    }
+
+    Text {
+        text: subtitle-text;
+        font-size: Theme.font-md;
+        color: Theme.color-muted;
+    }
+
+    SeparatorLine { }
+
+    @children
+}

@@ -1,0 +1,140 @@
+import { ScrollView, Palette } from "std-widgets.slint";
+import { Theme } from "../theme.slint";
+
+// Custom TextEdit that exposes cursor position as a byte offset.
+// Drop-in replacement for std-widgets TextEdit with an additional
+// `cursor-position-byte-offset` property and `cursor-moved` callback.
+export component AdvancedTextEdit inherits Rectangle {
+    in property <TextWrap> wrap <=> input.wrap;
+    in property <TextHorizontalAlignment> horizontal-alignment <=> input.horizontal-alignment;
+    in property <bool> read-only <=> input.read-only;
+    in property <length> font-size <=> input.font-size;
+    in property <string> font-family <=> input.font-family;
+    in property <bool> font-italic <=> input.font-italic;
+    in property <int> font-weight <=> input.font-weight;
+    in property <bool> enabled <=> input.enabled;
+    in property <brush> foreground <=> input.color;
+    in property <color> selection-background-color <=> input.selection-background-color;
+    in property <color> selection-foreground-color <=> input.selection-foreground-color;
+    in property <string> placeholder-text;
+    in property <brush> placeholder-color: Theme.color-muted;
+
+    in-out property <string> text <=> input.text;
+    in-out property <length> viewport-x <=> sv.viewport-x;
+    in-out property <length> viewport-y <=> sv.viewport-y;
+    in-out property <length> viewport-width <=> sv.viewport-width;
+    in-out property <length> viewport-height <=> sv.viewport-height;
+
+    out property <bool> has-focus: input.has-focus;
+    out property <length> visible-width <=> sv.visible-width;
+    out property <length> visible-height <=> sv.visible-height;
+    out property <int> cursor-position-byte-offset: input.cursor-position_byte-offset;
+
+    callback edited(text: string);
+    callback cursor-moved(byte-offset: int);
+    callback key-pressed(event: KeyEvent) -> EventResult;
+    callback key-released(event: KeyEvent) -> EventResult;
+
+    public function set-selection-offsets(start: int, end: int) { input.set-selection-offsets(start, end); }
+    public function select-all() { input.select-all(); }
+    public function clear-selection() { input.clear-selection(); }
+    public function cut() { input.cut(); }
+    public function copy() { input.copy(); }
+    public function paste() { input.paste(); }
+
+    forward-focus: input;
+    horizontal-stretch: 1;
+    vertical-stretch: 1;
+    border-radius: 4px;
+    border-width: 1px;
+    border-color: Palette.border;
+
+    states [
+        focused when root.has-focus: {
+            border-color: #4a9eff;
+        }
+        disabled when !root.enabled: {
+            opacity: 0.5;
+        }
+    ]
+
+    ContextMenuArea {
+        enabled: root.enabled;
+        Menu {
+            MenuItem {
+                title: @tr("Cut");
+                enabled: !root.read-only && root.enabled;
+                activated => { input.cut(); }
+            }
+            MenuItem {
+                title: @tr("Copy");
+                enabled: !root.text.is-empty;
+                activated => { input.copy(); }
+            }
+            MenuItem {
+                title: @tr("Paste");
+                enabled: !root.read-only && root.enabled;
+                activated => { input.paste(); }
+            }
+            MenuItem {
+                title: @tr("Select All");
+                enabled: !root.text.is-empty;
+                activated => { input.select-all(); }
+            }
+        }
+
+        sv := ScrollView {
+            x: 12px;
+            y: 12px;
+            width: parent.width - 24px;
+            height: parent.height - 24px;
+            viewport-width: root.wrap == TextWrap.no-wrap
+                ? max(self.visible-width, input.preferred-width)
+                : self.visible-width;
+            viewport-height: max(self.visible-height, input.preferred-height);
+
+            input := TextInput {
+                enabled: true;
+                single-line: false;
+                wrap: word-wrap;
+                width: sv.viewport-width;
+                color: Palette.foreground;
+                selection-background-color: Palette.selection-background;
+                selection-foreground-color: Palette.selection-foreground;
+
+                edited => { root.edited(self.text); }
+
+                cursor_position_changed(cpos) => {
+                    if (cpos.x + sv.viewport-x < 12px) {
+                        sv.viewport-x = min(0px, max(sv.visible-width - self.width, -cpos.x + 12px));
+                    } else if (cpos.x + sv.viewport-x > sv.visible-width - 12px) {
+                        sv.viewport-x = min(0px, max(sv.visible-width - self.width, sv.visible-width - cpos.x - 12px));
+                    }
+                    if (cpos.y + sv.viewport-y < 12px) {
+                        sv.viewport-y = min(0px, max(sv.visible-height - self.height, -cpos.y + 12px));
+                    } else if (cpos.y + sv.viewport-y > sv.visible-height - 12px - 20px) {
+                        sv.viewport-y = min(0px, max(sv.visible-height - self.height, sv.visible-height - cpos.y - 12px - 20px));
+                    }
+                    root.cursor-moved(input.cursor-position_byte-offset);
+                }
+
+                key_pressed(event) => { root.key-pressed(event) }
+                key_released(event) => { root.key-released(event) }
+            }
+        }
+    }
+
+    if (root.text == "" && input.preedit-text == ""): Text {
+        x: sv.x;
+        y: sv.y;
+        width: sv.width;
+        vertical-alignment: top;
+        text: root.placeholder-text;
+        color: root.placeholder-color;
+        font-size: input.font-size;
+        font-italic: input.font-italic;
+        font-weight: input.font-weight;
+        font-family: input.font-family;
+        overflow: elide;
+    }
+}

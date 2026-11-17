@@ -1,0 +1,84 @@
+import { Switch, ComboBox } from "std-widgets.slint";
+import { SeparatorLine } from "../components/separator-line.slint";
+import { TextAndCaseState } from "../globals.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { AdvancedTextEdit } from "../components/advanced-text-edit.slint";
+import { Theme } from "../theme.slint";
+
+export component TextInspector inherits PageContainer {
+    title-text: @tr("Text Inspector and Case Converter");
+    subtitle-text: @tr("Shows text statistics and change sentence case");
+
+    HorizontalLayout {
+        spacing: Theme.space-xl;
+        alignment: start;
+
+        HorizontalLayout {
+            spacing: Theme.space-sm;
+            Text {
+                text: @tr("Change case");
+                vertical-alignment: center;
+            }
+
+            cbx := ComboBox {
+                model: [
+                    @tr("Original"),
+                    @tr("Sentence case"),
+                    @tr("lower case"),
+                    @tr("UPPER CASE"),
+                    @tr("Title Case"),
+                    "camelCase",
+                    "PascalCase",
+                    "snake_case",
+                    "CONSTANT_CASE",
+                    "kebab-case",
+                    "COBOL-CASE",
+                    "Train-Case",
+                    "aLtErNaTiNg CaSe",
+                    "ReVeRsE aLtErNaTiNg CaSe",
+                    @tr("Reverse"),
+                ];
+                selected(_) => {
+                    TextAndCaseState.convert(self.current-index);
+                }
+            }
+        }
+    }
+
+    HorizontalLayout {
+        spacing: Theme.space-sm;
+
+        Text {
+            text: @tr("Line: ") + TextAndCaseState.cursor-position.line;
+        }
+
+        Text {
+            text: @tr("Row: ") + TextAndCaseState.cursor-position.row;
+        }
+
+        Text {
+            text: @tr("Characters: ") + TextAndCaseState.text-statistics.char-count;
+        }
+
+        Text {
+            text: @tr("Words: ") + TextAndCaseState.text-statistics.word-count;
+        }
+
+        Text {
+            text: @tr("Lines: ") + TextAndCaseState.text-statistics.lines;
+        }
+    }
+
+    SeparatorLine { }
+
+    AdvancedTextEdit {
+        text <=> TextAndCaseState.input;
+        vertical-stretch: 1;
+        edited(_) => {
+            TextAndCaseState.convert(cbx.current-index);
+        }
+        cursor-moved(offset) => {
+            TextAndCaseState.update-cursor(offset);
+        }
+    }
+}

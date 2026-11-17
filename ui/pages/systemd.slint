@@ -1,0 +1,601 @@
+import { Button, CheckBox, ComboBox, LineEdit, ScrollView } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { SeparatorLine } from "../components/separator-line.slint";
+import { AdvancedTextEdit } from "../components/advanced-text-edit.slint";
+import { SystemdState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+component TextField inherits VerticalLayout {
+    in property <string> label;
+    in property <string> placeholder;
+    in-out property <string> value;
+    callback edited();
+
+    spacing: Theme.space-xs;
+
+    Text {
+        text: root.label;
+        font-size: Theme.font-xs;
+        color: Theme.color-subtle;
+    }
+
+    LineEdit {
+        text <=> root.value;
+        placeholder-text: root.placeholder;
+        edited(_) => {
+            root.edited();
+        }
+    }
+}
+
+component AreaField inherits VerticalLayout {
+    in property <string> label;
+    in property <string> placeholder;
+    in-out property <string> value;
+    callback edited();
+
+    spacing: Theme.space-xs;
+
+    Text {
+        text: root.label;
+        font-size: Theme.font-xs;
+        color: Theme.color-subtle;
+    }
+
+    AdvancedTextEdit {
+        text <=> root.value;
+        placeholder-text: root.placeholder;
+        font-family: "monospace";
+        font-size: Theme.font-sm;
+        height: 64px;
+        edited(_) => {
+            root.edited();
+        }
+    }
+}
+
+export component SystemdPage inherits PageContainer {
+    title-text: @tr("Systemd");
+    subtitle-text: @tr("Generate Podman Quadlet and systemd units");
+
+    HorizontalLayout {
+        spacing: Theme.space-sm;
+        alignment: start;
+
+        Button {
+            text: @tr("Container");
+            primary: SystemdState.tab == 0;
+            clicked => {
+                SystemdState.tab = 0;
+                SystemdState.generate();
+            }
+        }
+
+        Button {
+            text: @tr("Volume");
+            primary: SystemdState.tab == 1;
+            clicked => {
+                SystemdState.tab = 1;
+                SystemdState.generate();
+            }
+        }
+
+        Button {
+            text: @tr("Network");
+            primary: SystemdState.tab == 2;
+            clicked => {
+                SystemdState.tab = 2;
+                SystemdState.generate();
+            }
+        }
+
+        Button {
+            text: @tr("Pod");
+            primary: SystemdState.tab == 3;
+            clicked => {
+                SystemdState.tab = 3;
+                SystemdState.generate();
+            }
+        }
+
+        Button {
+            text: @tr("Timer");
+            primary: SystemdState.tab == 4;
+            clicked => {
+                SystemdState.tab = 4;
+                SystemdState.generate();
+            }
+        }
+
+        Button {
+            text: @tr("Backup");
+            primary: SystemdState.tab == 5;
+            clicked => {
+                SystemdState.tab = 5;
+                SystemdState.generate();
+            }
+        }
+    }
+
+    HorizontalLayout {
+        spacing: Theme.space-md;
+        vertical-stretch: 1;
+
+        // Form
+        ScrollView {
+            horizontal-stretch: 1;
+
+            VerticalLayout {
+                spacing: Theme.space-sm;
+                padding-right: Theme.space-md;
+
+                if SystemdState.tab == 0: VerticalLayout {
+                    spacing: Theme.space-sm;
+
+                    TextField {
+                        label: @tr("Name");
+                        placeholder: "web";
+                        value <=> SystemdState.container-name;
+                        edited => {
+                            SystemdState.generate();
+                        }
+                    }
+                    TextField {
+                        label: @tr("Description");
+                        placeholder: @tr("Web server");
+                        value <=> SystemdState.container-description;
+                        edited => {
+                            SystemdState.generate();
+                        }
+                    }
+                    TextField {
+                        label: @tr("Image");
+                        placeholder: "docker.io/library/nginx:latest";
+                        value <=> SystemdState.container-image;
+                        edited => {
+                            SystemdState.generate();
+                        }
+                    }
+                    AreaField {
+                        label: @tr("Ports (one per line)");
+                        placeholder: "8080:80";
+                        value <=> SystemdState.container-ports;
+                        edited => {
+                            SystemdState.generate();
+                        }
+                    }
+                    AreaField {
+                        label: @tr("Volumes (one per line)");
+                        placeholder: "web-data:/data:Z";
+                        value <=> SystemdState.container-volumes;
+                        edited => {
+                            SystemdState.generate();
+                        }
+                    }
+                    AreaField {
+                        label: @tr("Environment (KEY=VALUE, one per line)");
+                        placeholder: "TZ=Europe/Berlin";
+                        value <=> SystemdState.container-environment;
+                        edited => {
+                            SystemdState.generate();
+                        }
+                    }
+                    TextField {
+                        label: @tr("Network");
+                        placeholder: "web.network";
+                        value <=> SystemdState.container-network;
+                        edited => {
+                            SystemdState.generate();
+                        }
+                    }
+
+                    HorizontalLayout {
+                        spacing: Theme.space-md;
+
+                        Text {
+                            text: @tr("Restart");
+                            vertical-alignment: center;
+                        }
+                        ComboBox {
+                            model: ["always", "on-failure", "no"];
+                            current-index <=> SystemdState.container-restart-index;
+                            selected(_) => {
+                                SystemdState.generate();
+                            }
+                        }
+                    }
+
+                    CheckBox {
+                        text: @tr("Auto-update (registry)");
+                        checked <=> SystemdState.container-auto-update;
+                        toggled => {
+                            SystemdState.generate();
+                        }
+                    }
+                    CheckBox {
+                        text: @tr("Start on login/boot");
+                        checked <=> SystemdState.container-start-on-boot;
+                        toggled => {
+                            SystemdState.generate();
+                        }
+                    }
+                }
+
+                if SystemdState.tab == 1: VerticalLayout {
+                    spacing: Theme.space-sm;
+
+                    TextField {
+                        label: @tr("Name");
+                        placeholder: "data";
+                        value <=> SystemdState.volume-name;
+                        edited => {
+                            SystemdState.generate();
+                        }
+                    }
+                    TextField {
+                        label: @tr("Driver (optional)");
+                        placeholder: "local";
+                        value <=> SystemdState.volume-driver;
+                        edited => {
+                            SystemdState.generate();
+                        }
+                    }
+                    AreaField {
+                        label: @tr("Labels (key=value, one per line)");
+                        placeholder: "app=web";
+                        value <=> SystemdState.volume-labels;
+                        edited => {
+                            SystemdState.generate();
+                        }
+                    }
+                }
+
+                if SystemdState.tab == 2: VerticalLayout {
+                    spacing: Theme.space-sm;
+
+                    TextField {
+                        label: @tr("Name");
+                        placeholder: "web";
+                        value <=> SystemdState.network-name;
+                        edited => {
+                            SystemdState.generate();
+                        }
+                    }
+                    TextField {
+                        label: @tr("Driver (optional)");
+                        placeholder: "bridge";
+                        value <=> SystemdState.network-driver;
+                        edited => {
+                            SystemdState.generate();
+                        }
+                    }
+                    TextField {
+                        label: @tr("Subnet");
+                        placeholder: "10.89.0.0/24";
+                        value <=> SystemdState.network-subnet;
+                        edited => {
+                            SystemdState.generate();
+                        }
+                    }
+                    TextField {
+                        label: @tr("Gateway");
+                        placeholder: "10.89.0.1";
+                        value <=> SystemdState.network-gateway;
+                        edited => {
+                            SystemdState.generate();
+                        }
+                    }
+                    CheckBox {
+                        text: @tr("IPv6");
+                        checked <=> SystemdState.network-ipv6;
+                        toggled => {
+                            SystemdState.generate();
+                        }
+                    }
+                    CheckBox {
+                        text: @tr("Internal (no external access)");
+                        checked <=> SystemdState.network-internal;
+                        toggled => {
+                            SystemdState.generate();
+                        }
+                    }
+                }
+
+                if SystemdState.tab == 3: VerticalLayout {
+                    spacing: Theme.space-sm;
+
+                    TextField {
+                        label: @tr("Name");
+                        placeholder: "stack";
+                        value <=> SystemdState.pod-name;
+                        edited => {
+                            SystemdState.generate();
+                        }
+                    }
+                    AreaField {
+                        label: @tr("Published ports (one per line)");
+                        placeholder: "8080:80";
+                        value <=> SystemdState.pod-ports;
+                        edited => {
+                            SystemdState.generate();
+                        }
+                    }
+                    TextField {
+                        label: @tr("Network");
+                        placeholder: "web.network";
+                        value <=> SystemdState.pod-network;
+                        edited => {
+                            SystemdState.generate();
+                        }
+                    }
+                    CheckBox {
+                        text: @tr("Start on login/boot");
+                        checked <=> SystemdState.pod-start-on-boot;
+                        toggled => {
+                            SystemdState.generate();
+                        }
+                    }
+                }
+
+                if SystemdState.tab == 4: VerticalLayout {
+                    spacing: Theme.space-sm;
+
+                    TextField {
+                        label: @tr("Name");
+                        placeholder: "backup";
+                        value <=> SystemdState.timer-name;
+                        edited => {
+                            SystemdState.generate();
+                        }
+                    }
+                    TextField {
+                        label: @tr("Description");
+                        placeholder: "Nightly backup";
+                        value <=> SystemdState.timer-description;
+                        edited => {
+                            SystemdState.generate();
+                        }
+                    }
+                    TextField {
+                        label: @tr("Command (absolute path)");
+                        placeholder: "/usr/local/bin/backup.sh";
+                        value <=> SystemdState.timer-command;
+                        edited => {
+                            SystemdState.generate();
+                        }
+                    }
+                    TextField {
+                        label: @tr("Working directory (optional)");
+                        placeholder: "/srv";
+                        value <=> SystemdState.timer-working-directory;
+                        edited => {
+                            SystemdState.generate();
+                        }
+                    }
+
+                    HorizontalLayout {
+                        spacing: Theme.space-md;
+
+                        Text {
+                            text: @tr("Schedule");
+                            vertical-alignment: center;
+                        }
+                        ComboBox {
+                            model: [@tr("Hourly"), @tr("Daily"), @tr("Weekly"), @tr("Monthly"), @tr("Custom")];
+                            current-index <=> SystemdState.timer-schedule-index;
+                            selected(_) => {
+                                SystemdState.generate();
+                            }
+                        }
+                    }
+                    if SystemdState.timer-schedule-index == 4: VerticalLayout {
+                    TextField {
+                        label: @tr("OnCalendar expression");
+                        placeholder: "Mon..Fri *-*-* 03:00:00";
+                        value <=> SystemdState.timer-calendar;
+                        edited => {
+                            SystemdState.generate();
+                        }
+                    }
+                    }
+                    TextField {
+                        label: @tr("Randomized delay in seconds (optional)");
+                        placeholder: "300";
+                        value <=> SystemdState.timer-delay;
+                        edited => {
+                            SystemdState.generate();
+                        }
+                    }
+                    CheckBox {
+                        text: @tr("Persistent (catch up after downtime)");
+                        checked <=> SystemdState.timer-persistent;
+                        toggled => {
+                            SystemdState.generate();
+                        }
+                    }
+                    CheckBox {
+                        text: @tr("Enable and start the timer when installing");
+                        checked <=> SystemdState.timer-enable-now;
+                        toggled => {
+                            SystemdState.generate();
+                        }
+                    }
+                }
+
+                if SystemdState.tab == 5: VerticalLayout {
+                    spacing: Theme.space-sm;
+
+                    TextField {
+                        label: @tr("Name");
+                        placeholder: "docs-backup";
+                        value <=> SystemdState.backup-name;
+                        edited => {
+                            SystemdState.generate();
+                        }
+                    }
+                    HorizontalLayout {
+                        spacing: Theme.space-md;
+
+                        Text {
+                            text: @tr("Source");
+                            vertical-alignment: center;
+                        }
+                        ComboBox {
+                            model: [@tr("Directory"), @tr("Podman volume")];
+                            current-index <=> SystemdState.backup-source-index;
+                            selected(_) => {
+                                SystemdState.generate();
+                            }
+                        }
+                    }
+                    TextField {
+                        label: @tr("Source (absolute directory or volume name)");
+                        placeholder: "/home/me/Documents";
+                        value <=> SystemdState.backup-source;
+                        edited => {
+                            SystemdState.generate();
+                        }
+                    }
+                    TextField {
+                        label: @tr("Target directory");
+                        placeholder: "/srv/backups";
+                        value <=> SystemdState.backup-target;
+                        edited => {
+                            SystemdState.generate();
+                        }
+                    }
+                    HorizontalLayout {
+                        spacing: Theme.space-md;
+
+                        Text {
+                            text: @tr("Compression");
+                            vertical-alignment: center;
+                        }
+                        ComboBox {
+                            model: ["gzip", "zstd", "xz"];
+                            current-index <=> SystemdState.backup-compression-index;
+                            selected(_) => {
+                                SystemdState.generate();
+                            }
+                        }
+                    }
+                    TextField {
+                        label: @tr("Keep archives for days (0 = forever)");
+                        placeholder: "14";
+                        value <=> SystemdState.backup-keep-days;
+                        edited => {
+                            SystemdState.generate();
+                        }
+                    }
+                    HorizontalLayout {
+                        spacing: Theme.space-md;
+
+                        Text {
+                            text: @tr("Schedule");
+                            vertical-alignment: center;
+                        }
+                        ComboBox {
+                            model: [@tr("Hourly"), @tr("Daily"), @tr("Weekly"), @tr("Monthly"), @tr("Custom")];
+                            current-index <=> SystemdState.backup-schedule-index;
+                            selected(_) => {
+                                SystemdState.generate();
+                            }
+                        }
+                    }
+                    if SystemdState.backup-schedule-index == 4: VerticalLayout {
+                        TextField {
+                            label: @tr("OnCalendar expression");
+                            placeholder: "*-*-* 02:30:00";
+                            value <=> SystemdState.backup-calendar;
+                            edited => {
+                                SystemdState.generate();
+                            }
+                        }
+                    }
+                    CheckBox {
+                        text: @tr("Enable and start the timer when installing");
+                        checked <=> SystemdState.backup-enable-now;
+                    }
+                }
+            }
+        }
+
+        // Output
+        VerticalLayout {
+            spacing: Theme.space-xs;
+            horizontal-stretch: 1;
+
+            HorizontalLayout {
+                spacing: Theme.space-sm;
+
+                Text {
+                    text: SystemdState.file-name.is-empty ? @tr("Unit") : (SystemdState.show-secondary && !SystemdState.secondary-output.is-empty ? SystemdState.secondary-file-name : SystemdState.file-name);
+                    font-size: Theme.font-sm;
+                    color: Theme.color-muted;
+                    vertical-alignment: center;
+                    horizontal-stretch: 1;
+                }
+
+                if !SystemdState.secondary-output.is-empty: Button {
+                    text: @tr("Timer");
+                    primary: !SystemdState.show-secondary;
+                    clicked => {
+                        SystemdState.show-secondary = false;
+                    }
+                }
+                if !SystemdState.secondary-output.is-empty: Button {
+                    text: @tr("Service");
+                    primary: SystemdState.show-secondary;
+                    clicked => {
+                        SystemdState.show-secondary = true;
+                    }
+                }
+
+                Button {
+                    text: @tr("Copy");
+                    enabled: !SystemdState.output.is-empty;
+                    clicked => {
+                        SystemdState.copy-output();
+                    }
+                }
+                Button {
+                    text: @tr("Save as file");
+                    enabled: !SystemdState.output.is-empty;
+                    clicked => {
+                        SystemdState.save-output();
+                    }
+                }
+                Button {
+                    text: @tr("Install");
+                    primary: true;
+                    enabled: !SystemdState.output.is-empty;
+                    clicked => {
+                        SystemdState.install-output();
+                    }
+                }
+            }
+
+            AdvancedTextEdit {
+                text: SystemdState.show-secondary && !SystemdState.secondary-output.is-empty ? SystemdState.secondary-output : SystemdState.output;
+                read-only: true;
+                font-family: "monospace";
+                font-size: Theme.font-sm;
+                vertical-stretch: 1;
+            }
+
+            if !SystemdState.error.is-empty: Text {
+                text: SystemdState.error;
+                font-size: Theme.font-sm;
+                color: #e05050;
+                wrap: word-wrap;
+            }
+
+            if !SystemdState.status.is-empty: Text {
+                text: SystemdState.status;
+                font-size: Theme.font-sm;
+                color: SystemdState.status-is-error ? #e05050 : #4caf50;
+                wrap: word-wrap;
+            }
+        }
+    }
+}

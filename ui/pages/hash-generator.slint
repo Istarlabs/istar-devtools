@@ -1,0 +1,51 @@
+import { ComboBox } from "std-widgets.slint";
+import { SeparatorLine } from "../components/separator-line.slint";
+import { HashGeneratorState } from "../globals.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { InputOutputPanel } from "../components/input-output-panel.slint";
+import { Theme } from "../theme.slint";
+
+export component HashGenerator inherits PageContainer {
+    title-text: @tr("Hash Generator");
+    subtitle-text: @tr("Calculate and verify hashes for MD5, SHA1, SHA256, SHA512 and more");
+
+    HorizontalLayout {
+        spacing: Theme.space-sm;
+        alignment: start;
+
+        Text {
+            text: @tr("Algorithm");
+            vertical-alignment: center;
+        }
+
+        ComboBox {
+            model: ["MD5", "SHA1", "SHA256", "SHA512", "SHA-3 256", "SHA-3 512", "ADLER", "CRC"];
+            current-index <=> HashGeneratorState.selected-algorithm;
+            selected => {
+                HashGeneratorState.convert(self.current-index);
+            }
+        }
+    }
+
+    SeparatorLine { }
+
+    InputOutputPanel {
+        input-text <=> HashGeneratorState.input;
+        output-text <=> HashGeneratorState.output;
+        open-file => {
+            HashGeneratorState.open-from-file();
+            HashGeneratorState.convert(HashGeneratorState.selected-algorithm);
+        }
+        paste => {
+            HashGeneratorState.paste-input();
+            HashGeneratorState.convert(HashGeneratorState.selected-algorithm);
+        }
+        clear => {
+            HashGeneratorState.input = "";
+            HashGeneratorState.output = "";
+        }
+        copy => {
+            HashGeneratorState.copy-output();
+        }
+    }
+}

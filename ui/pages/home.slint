@@ -1,0 +1,16 @@
+import { VerticalBox, Button }from "std-widgets.slint";
+export component HomePage inherits VerticalBox {
+    alignment: start;
+    Text {
+        text: "Hello world";
+        font-size: 24px;
+        horizontal-alignment: center;
+    }
+
+    HorizontalLayout {
+        alignment: center;
+        Button {
+            text: "Press me";
+        }
+    }
+}

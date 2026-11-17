@@ -1,0 +1,173 @@
+import { LineEdit, Button } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { SeparatorLine } from "../components/separator-line.slint";
+import { CronState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+export component CronPage inherits PageContainer {
+    title-text: @tr("CRON Parser / Generator");
+    subtitle-text: @tr("Parse expressions and preview upcoming execution times");
+
+    // Expression row
+    HorizontalLayout {
+        spacing: Theme.space-md;
+
+        Text {
+            text: @tr("Expression");
+            vertical-alignment: center;
+        }
+
+        LineEdit {
+            text <=> CronState.expression;
+            placeholder-text: "* * * * *";
+            horizontal-stretch: 1;
+            font-family: "monospace";
+        }
+
+        Button {
+            text: @tr("Parse");
+            primary: true;
+            clicked => {
+                CronState.parse();
+            }
+        }
+
+        Button {
+            text: @tr("Copy");
+            enabled: !CronState.expression.is-empty;
+            clicked => {
+                CronState.copy-expression();
+            }
+        }
+    }
+
+    if !CronState.error.is-empty: Text {
+        text: CronState.error;
+        font-size: Theme.font-sm;
+        color: #e05050;
+        wrap: word-wrap;
+    }
+
+    SeparatorLine { }
+
+    // Builder section
+    Text {
+        text: @tr("Builder");
+        font-size: Theme.font-md;
+        color: Theme.color-muted;
+    }
+
+    HorizontalLayout {
+        spacing: Theme.space-md;
+        alignment: start;
+
+        Text {
+            text: @tr("Minute");
+            vertical-alignment: center;
+            min-width: 60px;
+        }
+
+        LineEdit {
+            text <=> CronState.field-minute;
+            width: 100px;
+            font-family: "monospace";
+        }
+
+        Text {
+            text: @tr("Hour");
+            vertical-alignment: center;
+            min-width: 40px;
+        }
+
+        LineEdit {
+            text <=> CronState.field-hour;
+            width: 100px;
+            font-family: "monospace";
+        }
+
+        Text {
+            text: @tr("Day");
+            vertical-alignment: center;
+            min-width: 30px;
+        }
+
+        LineEdit {
+            text <=> CronState.field-day;
+            width: 100px;
+            font-family: "monospace";
+        }
+    }
+
+    HorizontalLayout {
+        spacing: Theme.space-md;
+        alignment: start;
+
+        Text {
+            text: @tr("Month");
+            vertical-alignment: center;
+            min-width: 60px;
+        }
+
+        LineEdit {
+            text <=> CronState.field-month;
+            width: 100px;
+            font-family: "monospace";
+        }
+
+        Text {
+            text: @tr("Weekday");
+            vertical-alignment: center;
+            min-width: 40px;
+        }
+
+        LineEdit {
+            text <=> CronState.field-weekday;
+            width: 100px;
+            font-family: "monospace";
+        }
+
+        Button {
+            text: @tr("Generate Expression");
+            clicked => {
+                CronState.generate-from-builder();
+            }
+        }
+    }
+
+    SeparatorLine { }
+
+    // Description
+    if !CronState.description.is-empty: VerticalLayout {
+        spacing: Theme.space-xs;
+
+        Text {
+            text: @tr("Description");
+            font-size: Theme.font-sm;
+            color: Theme.color-muted;
+        }
+
+        Text {
+            text: CronState.description;
+            font-size: Theme.font-md;
+            wrap: word-wrap;
+        }
+    }
+
+    // Next executions list
+    if CronState.next-times.length > 0: VerticalLayout {
+        spacing: Theme.space-xs;
+
+        Text {
+            text: @tr("Next 10 Executions (UTC)");
+            font-size: Theme.font-sm;
+            color: Theme.color-muted;
+        }
+
+        for ts in CronState.next-times: Text {
+            text: ts;
+            font-size: Theme.font-sm;
+            font-family: "monospace";
+            color: Theme.color-nav-item;
+        }
+    }
+}

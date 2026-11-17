@@ -1,0 +1,159 @@
+import { Button, ComboBox } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { SeparatorLine } from "../components/separator-line.slint";
+import { AdvancedTextEdit } from "../components/advanced-text-edit.slint";
+import { FormatterState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+export component FormatterPage inherits PageContainer {
+    title-text: @tr("Formatter");
+    subtitle-text: @tr("Format and minify JSON, XML and YAML");
+
+    HorizontalLayout {
+        spacing: Theme.space-sm;
+        alignment: start;
+
+        Button {
+            text: "JSON";
+            primary: FormatterState.mode == 0;
+            clicked => {
+                FormatterState.mode = 0;
+            }
+        }
+
+        Button {
+            text: "XML";
+            primary: FormatterState.mode == 1;
+            clicked => {
+                FormatterState.mode = 1;
+            }
+        }
+
+        Button {
+            text: "YAML";
+            primary: FormatterState.mode == 2;
+            clicked => {
+                FormatterState.mode = 2;
+            }
+        }
+    }
+
+    SeparatorLine { }
+
+    HorizontalLayout {
+        spacing: Theme.space-md;
+        vertical-stretch: 1;
+
+        VerticalLayout {
+            spacing: Theme.space-xs;
+            horizontal-stretch: 1;
+
+            HorizontalLayout {
+                spacing: Theme.space-sm;
+
+                Text {
+                    text: @tr("Input");
+                    font-size: Theme.font-sm;
+                    color: Theme.color-muted;
+                    vertical-alignment: center;
+                    horizontal-stretch: 1;
+                }
+
+                Button {
+                    text: @tr("Paste");
+                    clicked => {
+                        FormatterState.paste-input();
+                    }
+                }
+            }
+
+            AdvancedTextEdit {
+                text <=> FormatterState.input;
+                font-family: "monospace";
+                font-size: Theme.font-sm;
+                vertical-stretch: 1;
+            }
+        }
+
+        VerticalLayout {
+            spacing: Theme.space-xs;
+            horizontal-stretch: 1;
+
+            HorizontalLayout {
+                spacing: Theme.space-sm;
+
+                Text {
+                    text: @tr("Output");
+                    font-size: Theme.font-sm;
+                    color: Theme.color-muted;
+                    vertical-alignment: center;
+                    horizontal-stretch: 1;
+                }
+
+                Button {
+                    text: @tr("Use as input");
+                    enabled: !FormatterState.output.is-empty;
+                    clicked => {
+                        FormatterState.use-output-as-input();
+                    }
+                }
+
+                Button {
+                    text: @tr("Copy");
+                    enabled: !FormatterState.output.is-empty;
+                    clicked => {
+                        FormatterState.copy-output();
+                    }
+                }
+            }
+
+            AdvancedTextEdit {
+                text: FormatterState.output;
+                read-only: true;
+                font-family: "monospace";
+                font-size: Theme.font-sm;
+                vertical-stretch: 1;
+            }
+        }
+    }
+
+    HorizontalLayout {
+        spacing: Theme.space-sm;
+        alignment: end;
+
+        if FormatterState.mode != 2: Text {
+            text: @tr("Indent");
+            font-size: Theme.font-sm;
+            color: Theme.color-muted;
+            vertical-alignment: center;
+        }
+
+        if FormatterState.mode != 2: ComboBox {
+            model: [@tr("2 spaces"), @tr("4 spaces"), @tr("Tab")];
+            current-index <=> FormatterState.indent-index;
+        }
+
+        Button {
+            text: @tr("Minify");
+            enabled: FormatterState.mode != 2;
+            clicked => {
+                FormatterState.minify();
+            }
+        }
+
+        Button {
+            text: @tr("Format");
+            primary: true;
+            clicked => {
+                FormatterState.format();
+            }
+        }
+    }
+
+    if !FormatterState.error.is-empty: Text {
+        text: FormatterState.error;
+        font-size: Theme.font-sm;
+        color: #e05050;
+        wrap: word-wrap;
+    }
+}

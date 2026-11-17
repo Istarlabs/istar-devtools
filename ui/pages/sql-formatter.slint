@@ -1,0 +1,117 @@
+import { Button, ComboBox } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { AdvancedTextEdit } from "../components/advanced-text-edit.slint";
+import { SqlFormatterState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+export component SqlFormatterPage inherits PageContainer {
+    title-text: @tr("SQL");
+    subtitle-text: @tr("Format and minify SQL");
+
+    HorizontalLayout {
+        spacing: Theme.space-sm;
+
+        ComboBox {
+            model: [@tr("Generic"), "PostgreSQL", "SQL Server"];
+            current-index <=> SqlFormatterState.dialect-index;
+        }
+
+        ComboBox {
+            model: [@tr("2 spaces"), @tr("4 spaces"), @tr("Tab")];
+            current-index <=> SqlFormatterState.indent-index;
+        }
+
+        ComboBox {
+            model: [@tr("Keep keyword case"), @tr("UPPERCASE"), @tr("lowercase")];
+            current-index <=> SqlFormatterState.case-index;
+        }
+
+        Rectangle { horizontal-stretch: 1; }
+
+        Button {
+            text: @tr("Paste");
+            clicked => {
+                SqlFormatterState.paste-input();
+            }
+        }
+
+        Button {
+            text: @tr("Minify");
+            clicked => {
+                SqlFormatterState.minify();
+            }
+        }
+
+        Button {
+            text: @tr("Format");
+            primary: true;
+            clicked => {
+                SqlFormatterState.format();
+            }
+        }
+    }
+
+    HorizontalLayout {
+        spacing: Theme.space-md;
+        vertical-stretch: 1;
+
+        VerticalLayout {
+            spacing: Theme.space-xs;
+            horizontal-stretch: 1;
+
+            Text {
+                text: @tr("Input");
+                font-size: Theme.font-sm;
+                color: Theme.color-muted;
+            }
+
+            AdvancedTextEdit {
+                text <=> SqlFormatterState.input;
+                font-family: "monospace";
+                font-size: Theme.font-sm;
+                vertical-stretch: 1;
+            }
+        }
+
+        VerticalLayout {
+            spacing: Theme.space-xs;
+            horizontal-stretch: 1;
+
+            HorizontalLayout {
+                spacing: Theme.space-sm;
+
+                Text {
+                    text: @tr("Output");
+                    font-size: Theme.font-sm;
+                    color: Theme.color-muted;
+                    vertical-alignment: center;
+                    horizontal-stretch: 1;
+                }
+
+                Button {
+                    text: @tr("Use as input");
+                    enabled: !SqlFormatterState.output.is-empty;
+                    clicked => {
+                        SqlFormatterState.use-output-as-input();
+                    }
+                }
+
+                Button {
+                    text: @tr("Copy");
+                    enabled: !SqlFormatterState.output.is-empty;
+                    clicked => {
+                        SqlFormatterState.copy-output();
+                    }
+                }
+            }
+
+            AdvancedTextEdit {
+                text: SqlFormatterState.output;
+                read-only: true;
+                font-family: "monospace";
+                font-size: Theme.font-sm;
+                vertical-stretch: 1;
+            }
+        }
+    }
+}

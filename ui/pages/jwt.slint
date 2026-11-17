@@ -1,0 +1,324 @@
+import { ComboBox, LineEdit, Button } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { SeparatorLine } from "../components/separator-line.slint";
+import { AdvancedTextEdit } from "../components/advanced-text-edit.slint";
+import { JwtState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+export component JwtPage inherits PageContainer {
+    title-text: @tr("JWT Encoder / Decoder");
+    subtitle-text: @tr("Decode, encode and verify JSON Web Tokens");
+
+    property <[string]> algorithms: ["HS256", "HS384", "HS512", "RS256", "RS384", "RS512", "ES256", "ES384"];
+
+    // Mode tabs
+    HorizontalLayout {
+        spacing: Theme.space-sm;
+        alignment: start;
+
+        Button {
+            text: @tr("Decode");
+            primary: !JwtState.encode-mode;
+            clicked => {
+                JwtState.encode-mode = false;
+            }
+        }
+
+        Button {
+            text: @tr("Encode");
+            primary: JwtState.encode-mode;
+            clicked => {
+                JwtState.encode-mode = true;
+            }
+        }
+    }
+
+    SeparatorLine { }
+
+    // ---------------- DECODE MODE ----------------
+    if !JwtState.encode-mode: VerticalLayout {
+        spacing: Theme.space-md;
+        vertical-stretch: 1;
+
+        HorizontalLayout {
+            spacing: Theme.space-sm;
+
+            Text {
+                text: @tr("Token");
+                vertical-alignment: center;
+                min-width: 70px;
+            }
+
+            AdvancedTextEdit {
+                text <=> JwtState.token-input;
+                placeholder-text: @tr("Paste a JWT (header.payload.signature)…");
+                font-family: "monospace";
+                font-size: Theme.font-sm;
+                horizontal-stretch: 1;
+                min-height: 70px;
+            }
+
+            VerticalLayout {
+                spacing: Theme.space-xs;
+                alignment: start;
+
+                Button {
+                    text: @tr("Paste");
+                    clicked => {
+                        JwtState.paste-token();
+                    }
+                }
+
+                Button {
+                    text: @tr("Decode");
+                    primary: true;
+                    clicked => {
+                        JwtState.decode();
+                    }
+                }
+            }
+        }
+
+        if !JwtState.decode-error.is-empty: Text {
+            text: JwtState.decode-error;
+            font-size: Theme.font-sm;
+            color: #e05050;
+            wrap: word-wrap;
+        }
+
+        HorizontalLayout {
+            spacing: Theme.space-md;
+            vertical-stretch: 1;
+
+            VerticalLayout {
+                spacing: Theme.space-xs;
+                horizontal-stretch: 1;
+
+                Text {
+                    text: @tr("Header");
+                    font-size: Theme.font-sm;
+                    color: Theme.color-muted;
+                }
+
+                AdvancedTextEdit {
+                    text <=> JwtState.header-json;
+                    read-only: true;
+                    font-family: "monospace";
+                    font-size: Theme.font-sm;
+                    vertical-stretch: 1;
+                }
+            }
+
+            VerticalLayout {
+                spacing: Theme.space-xs;
+                horizontal-stretch: 1;
+
+                Text {
+                    text: @tr("Payload");
+                    font-size: Theme.font-sm;
+                    color: Theme.color-muted;
+                }
+
+                AdvancedTextEdit {
+                    text <=> JwtState.payload-json;
+                    read-only: true;
+                    font-family: "monospace";
+                    font-size: Theme.font-sm;
+                    vertical-stretch: 1;
+                }
+            }
+        }
+
+        if !JwtState.signature-raw.is-empty: VerticalLayout {
+            spacing: Theme.space-xs;
+
+            Text {
+                text: @tr("Signature (hex)");
+                font-size: Theme.font-sm;
+                color: Theme.color-muted;
+            }
+
+            Text {
+                text: JwtState.signature-raw;
+                font-family: "monospace";
+                font-size: Theme.font-xs;
+                wrap: word-wrap;
+            }
+        }
+
+        SeparatorLine { }
+
+        // Verification
+        HorizontalLayout {
+            spacing: Theme.space-sm;
+
+            Text {
+                text: @tr("Algorithm");
+                vertical-alignment: center;
+            }
+
+            ComboBox {
+                model: algorithms;
+                current-index <=> JwtState.verify-algorithm-index;
+            }
+
+            Text {
+                text: @tr("Secret / Public Key");
+                vertical-alignment: center;
+            }
+
+            LineEdit {
+                text <=> JwtState.verify-secret;
+                placeholder-text: @tr("HMAC secret or PEM public key");
+                horizontal-stretch: 1;
+                font-family: "monospace";
+            }
+
+            Button {
+                text: @tr("Verify");
+                clicked => {
+                    JwtState.verify();
+                }
+            }
+        }
+
+        if JwtState.verify-status == 1: Text {
+            text: "✓ " + @tr("Signature valid");
+            color: #4caf50;
+            font-size: Theme.font-md;
+        }
+
+        if JwtState.verify-status == 2: Text {
+            text: "✗ " + @tr("Invalid signature");
+            color: #e05050;
+            font-size: Theme.font-md;
+        }
+
+        if JwtState.verify-status == 3: Text {
+            text: JwtState.verify-message;
+            color: #e0a050;
+            font-size: Theme.font-sm;
+            wrap: word-wrap;
+        }
+    }
+
+    // ---------------- ENCODE MODE ----------------
+    if JwtState.encode-mode: VerticalLayout {
+        spacing: Theme.space-md;
+        vertical-stretch: 1;
+
+        HorizontalLayout {
+            spacing: Theme.space-md;
+            vertical-stretch: 1;
+
+            VerticalLayout {
+                spacing: Theme.space-xs;
+                horizontal-stretch: 1;
+
+                Text {
+                    text: @tr("Header JSON");
+                    font-size: Theme.font-sm;
+                    color: Theme.color-muted;
+                }
+
+                AdvancedTextEdit {
+                    text <=> JwtState.encode-header;
+                    font-family: "monospace";
+                    font-size: Theme.font-sm;
+                    vertical-stretch: 1;
+                }
+            }
+
+            VerticalLayout {
+                spacing: Theme.space-xs;
+                horizontal-stretch: 1;
+
+                Text {
+                    text: @tr("Payload JSON");
+                    font-size: Theme.font-sm;
+                    color: Theme.color-muted;
+                }
+
+                AdvancedTextEdit {
+                    text <=> JwtState.encode-payload;
+                    font-family: "monospace";
+                    font-size: Theme.font-sm;
+                    vertical-stretch: 1;
+                }
+            }
+        }
+
+        HorizontalLayout {
+            spacing: Theme.space-sm;
+
+            Text {
+                text: @tr("Algorithm");
+                vertical-alignment: center;
+            }
+
+            ComboBox {
+                model: algorithms;
+                current-index <=> JwtState.encode-algorithm-index;
+            }
+
+            Text {
+                text: @tr("Secret / Private Key");
+                vertical-alignment: center;
+            }
+
+            LineEdit {
+                text <=> JwtState.encode-secret;
+                placeholder-text: @tr("HMAC secret or PEM private key");
+                horizontal-stretch: 1;
+                font-family: "monospace";
+            }
+
+            Button {
+                text: @tr("Encode");
+                primary: true;
+                clicked => {
+                    JwtState.encode();
+                }
+            }
+        }
+
+        if !JwtState.encode-error.is-empty: Text {
+            text: JwtState.encode-error;
+            font-size: Theme.font-sm;
+            color: #e05050;
+            wrap: word-wrap;
+        }
+
+        VerticalLayout {
+            spacing: Theme.space-xs;
+
+            HorizontalLayout {
+                spacing: Theme.space-sm;
+
+                Text {
+                    text: @tr("Result");
+                    font-size: Theme.font-sm;
+                    color: Theme.color-muted;
+                    horizontal-stretch: 1;
+                    vertical-alignment: center;
+                }
+
+                Button {
+                    text: @tr("Copy");
+                    enabled: !JwtState.encode-result.is-empty;
+                    clicked => {
+                        JwtState.copy-result();
+                    }
+                }
+            }
+
+            AdvancedTextEdit {
+                text <=> JwtState.encode-result;
+                read-only: true;
+                font-family: "monospace";
+                font-size: Theme.font-sm;
+                min-height: 80px;
+            }
+        }
+    }
+}

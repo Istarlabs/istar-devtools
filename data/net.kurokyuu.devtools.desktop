@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Dev Tools
+GenericName=Developer Toolbox
+Comment=Developer toolbox (base64, hash, JWT, converters, ...)
+Exec=/usr/bin/istar-devtools
+Icon=net.kurokyuu.devtools
+Terminal=false
+Categories=Development;
+Keywords=base64;hash;jwt;json;converter;developer;tools;
+StartupWMClass=net.kurokyuu.devtools

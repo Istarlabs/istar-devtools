@@ -1,0 +1,230 @@
+import { ComboBox, LineEdit, Button } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { SeparatorLine } from "../components/separator-line.slint";
+import { UnitConverterState, ByteConverterState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+export component UnitConverterPage inherits PageContainer {
+    title-text: @tr("Unit Converter");
+    subtitle-text: @tr("Convert values between different units of measurement");
+
+    HorizontalLayout {
+        alignment: start;
+        spacing: Theme.space-md;
+
+        Text {
+            text: @tr("Category:");
+            vertical-alignment: center;
+        }
+
+        ComboBox {
+            model: [
+                @tr("Length"),
+                @tr("Mass"),
+                @tr("Temperature"),
+                @tr("Speed"),
+                @tr("Area"),
+                @tr("Volume"),
+                @tr("Time")
+            ];
+            current-index <=> UnitConverterState.selected-category;
+            selected(_) => {
+                UnitConverterState.category-changed(self.current-index);
+            }
+        }
+    }
+
+    SeparatorLine { }
+
+    HorizontalLayout {
+        spacing: Theme.space-lg;
+        vertical-stretch: 1;
+
+        // From column
+        VerticalLayout {
+            horizontal-stretch: 1;
+            spacing: Theme.space-sm;
+
+            Text {
+                text: @tr("From");
+                font-size: Theme.font-sm;
+                color: Theme.color-muted;
+            }
+
+            ComboBox {
+                model: UnitConverterState.unit-names;
+                current-index <=> UnitConverterState.from-unit-index;
+                selected(_) => {
+                    UnitConverterState.convert();
+                }
+            }
+
+            LineEdit {
+                text <=> UnitConverterState.input;
+                placeholder-text: @tr("Enter value...");
+                edited(_) => {
+                    UnitConverterState.convert();
+                }
+            }
+        }
+
+        // Swap button
+        VerticalLayout {
+            alignment: center;
+            horizontal-stretch: 0;
+
+            Button {
+                text: "⇄";
+                clicked => {
+                    UnitConverterState.swap-units();
+                }
+            }
+        }
+
+        // To column
+        VerticalLayout {
+            horizontal-stretch: 1;
+            spacing: Theme.space-sm;
+
+            Text {
+                text: @tr("To");
+                font-size: Theme.font-sm;
+                color: Theme.color-muted;
+            }
+
+            ComboBox {
+                model: UnitConverterState.unit-names;
+                current-index <=> UnitConverterState.to-unit-index;
+                selected(_) => {
+                    UnitConverterState.convert();
+                }
+            }
+
+            HorizontalLayout {
+                spacing: Theme.space-sm;
+
+                LineEdit {
+                    text: UnitConverterState.output;
+                    read-only: true;
+                    horizontal-stretch: 1;
+                    placeholder-text: @tr("Result");
+                }
+
+                Button {
+                    text: @tr("Copy");
+                    clicked => {
+                        UnitConverterState.copy-output();
+                    }
+                }
+            }
+        }
+    }
+
+    SeparatorLine { }
+
+    Text {
+        text: @tr("Byte / Data Size");
+        font-size: Theme.font-lg;
+    }
+
+    Text {
+        text: @tr("Convert between decimal (SI) and binary (IEC) units");
+        font-size: Theme.font-sm;
+        color: Theme.color-muted;
+    }
+
+    HorizontalLayout {
+        spacing: Theme.space-lg;
+
+        // From column
+        VerticalLayout {
+            horizontal-stretch: 1;
+            spacing: Theme.space-sm;
+
+            Text {
+                text: @tr("From");
+                font-size: Theme.font-sm;
+                color: Theme.color-muted;
+            }
+
+            ComboBox {
+                model: [
+                    "Byte (B)",
+                    "Kilobyte (KB)", "Megabyte (MB)", "Gigabyte (GB)",
+                    "Terabyte (TB)", "Petabyte (PB)", "Exabyte (EB)",
+                    "Kibibyte (KiB)", "Mebibyte (MiB)", "Gibibyte (GiB)",
+                    "Tebibyte (TiB)", "Pebibyte (PiB)", "Exbibyte (EiB)",
+                ];
+                current-index <=> ByteConverterState.from-unit-index;
+                selected(_) => {
+                    ByteConverterState.convert();
+                }
+            }
+
+            LineEdit {
+                text <=> ByteConverterState.input;
+                placeholder-text: @tr("Enter value...");
+                edited(_) => {
+                    ByteConverterState.convert();
+                }
+            }
+        }
+
+        // Swap button
+        VerticalLayout {
+            alignment: center;
+            horizontal-stretch: 0;
+
+            Button {
+                text: "⇄";
+                clicked => {
+                    ByteConverterState.swap-units();
+                }
+            }
+        }
+
+        // To column
+        VerticalLayout {
+            horizontal-stretch: 1;
+            spacing: Theme.space-sm;
+
+            Text {
+                text: @tr("To");
+                font-size: Theme.font-sm;
+                color: Theme.color-muted;
+            }
+
+            ComboBox {
+                model: [
+                    "Byte (B)",
+                    "Kilobyte (KB)", "Megabyte (MB)", "Gigabyte (GB)",
+                    "Terabyte (TB)", "Petabyte (PB)", "Exabyte (EB)",
+                    "Kibibyte (KiB)", "Mebibyte (MiB)", "Gibibyte (GiB)",
+                    "Tebibyte (TiB)", "Pebibyte (PiB)", "Exbibyte (EiB)",
+                ];
+                current-index <=> ByteConverterState.to-unit-index;
+                selected(_) => {
+                    ByteConverterState.convert();
+                }
+            }
+
+            HorizontalLayout {
+                spacing: Theme.space-sm;
+
+                LineEdit {
+                    text: ByteConverterState.output;
+                    read-only: true;
+                    horizontal-stretch: 1;
+                    placeholder-text: @tr("Result");
+                }
+
+                Button {
+                    text: @tr("Copy");
+                    clicked => {
+                        ByteConverterState.copy-output();
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,35 @@
+# What this project differs by. Everything else lives in devscripts (https://github.com/Istarlabs/devscripts).
+name = "istar-devtools"
+env_prefix = "ISTAR_DEVTOOLS"
+
+[rust]
+binary = "istar-devtools"
+install_root = "~/.local"
+
+# python3 Scripts/rpm.py publish: the package for an RPM repository (see rpm.py's docstring). It brings the launcher
+# entry, named after the app id the window sets (src/main.rs), which is how Plasma finds the window's icon.
+[rpm]
+name = "istar-devtools"
+summary = "Developer toolbox: encoders, hashes, JWT, converters, formatters"
+license = "GPL-3.0-or-later"
+url = "https://github.com/Istarlabs/istar-devtools"
+version_file = "Cargo.toml"
+build = ["cargo build --release --locked"]
+# winit and the femtovg renderer load these at run time (dlopen), so rpmbuild cannot see them; X11 is left out, the
+# window uses the Wayland backend only.
+requires = [
+    "libwayland-client.so.0()(64bit)",
+    "libwayland-egl.so.1()(64bit)",
+    "libxkbcommon.so.0()(64bit)",
+    "libEGL.so.1()(64bit)",
+    "libdbus-1.so.3()(64bit)",
+]
+files = { "target/release/istar-devtools" = "/usr/bin/istar-devtools", "data/net.kurokyuu.devtools.desktop" = "/usr/share/applications/net.kurokyuu.devtools.desktop", "ui/svg/app-icon.svg" = "/usr/share/icons/hicolor/scalable/apps/net.kurokyuu.devtools.svg" }
+
+[spdx]
+holder = "Pascal Klose"
+licence = "GPL-3.0-or-later"
+exclude = [".claude/", "patches/", "app_licenses.json"]
+
+[repo]
+main_branch = "master"

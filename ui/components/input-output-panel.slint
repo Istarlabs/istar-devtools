@@ -1,0 +1,77 @@
+import { Button, HorizontalBox } from "std-widgets.slint";
+import { AdvancedTextEdit } from "./advanced-text-edit.slint";
+import { Theme } from "../theme.slint";
+
+export component InputOutputPanel inherits HorizontalLayout {
+    in-out property <string> input-text;
+    in-out property <string> output-text;
+    in property <bool> output-readonly: true;
+
+    spacing: Theme.space-md;
+    vertical-stretch: 1;
+
+    // Callbacks — input side
+    callback open-file();
+    callback paste();
+    callback clear();
+    // Callbacks — output side
+    callback copy();
+
+    // Input column
+    HorizontalLayout {
+        horizontal-stretch: 1;
+        spacing: Theme.space-sm;
+
+        AdvancedTextEdit {
+            text <=> input-text;
+            horizontal-stretch: 1;
+        }
+
+        VerticalLayout {
+            spacing: Theme.space-xs;
+            alignment: start;
+            horizontal-stretch: 0;
+
+            Button {
+                text: @tr("Open File");
+                clicked => { root.open-file(); }
+            }
+
+            Button {
+                text: @tr("Paste");
+                clicked => { root.paste(); }
+            }
+
+            Button {
+                text: @tr("Clear");
+                clicked => {
+                    input-text = "";
+                    output-text = "";
+                    root.clear();
+                }
+            }
+        }
+    }
+
+    // Output column
+    HorizontalLayout {
+        horizontal-stretch: 1;
+        spacing: Theme.space-sm;
+
+        AdvancedTextEdit {
+            text <=> output-text;
+            horizontal-stretch: 1;
+            read-only: output-readonly;
+        }
+
+        VerticalLayout {
+            alignment: start;
+            horizontal-stretch: 0;
+
+            Button {
+                text: @tr("Copy");
+                clicked => { root.copy(); }
+            }
+        }
+    }
+}

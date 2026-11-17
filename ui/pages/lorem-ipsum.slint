@@ -1,0 +1,69 @@
+import { ComboBox, LineEdit, Button, CheckBox } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { SeparatorLine } from "../components/separator-line.slint";
+import { AdvancedTextEdit } from "../components/advanced-text-edit.slint";
+import { LoremIpsumState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+export component LoremIpsumPage inherits PageContainer {
+    title-text: @tr("Lorem Ipsum Generator");
+    subtitle-text: @tr("Generate placeholder text by words, sentences, or paragraphs");
+
+    HorizontalLayout {
+        spacing: Theme.space-md;
+        alignment: start;
+
+        Text {
+            text: @tr("Unit");
+            vertical-alignment: center;
+        }
+
+        ComboBox {
+            model: [@tr("Words"), @tr("Sentences"), @tr("Paragraphs")];
+            current-index <=> LoremIpsumState.unit-index;
+        }
+
+        Text {
+            text: @tr("Count");
+            vertical-alignment: center;
+        }
+
+        LineEdit {
+            text <=> LoremIpsumState.count;
+            width: 80px;
+        }
+
+        CheckBox {
+            text: @tr("Classic opening");
+            checked <=> LoremIpsumState.classic-start;
+        }
+
+        Button {
+            text: @tr("Generate");
+            primary: true;
+            clicked => {
+                LoremIpsumState.generate();
+            }
+        }
+    }
+
+    SeparatorLine { }
+
+    AdvancedTextEdit {
+        text <=> LoremIpsumState.output;
+        read-only: true;
+        placeholder-text: @tr("Generated text will appear here...");
+        vertical-stretch: 1;
+    }
+
+    HorizontalLayout {
+        alignment: end;
+
+        Button {
+            text: @tr("Copy");
+            clicked => {
+                LoremIpsumState.copy-output();
+            }
+        }
+    }
+}

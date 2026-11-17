@@ -1,0 +1,646 @@
+import {
+    CursorPosition,
+    TextStatistics,
+    DiskInfo,
+    NumberBaseData,
+    NumberBaseType,
+    AstNode,
+    LicenseDep,
+    VectorInput,
+    VectorResult,
+    DiffLine,
+    ResultRow,
+    MdBlock,
+} from "types.slint";
+export global LicenseState {
+    in-out property <[LicenseDep]> deps;
+    in-out property <string> version-text;
+    callback open-url(string);
+}
+
+export global Base64State {
+    in-out property <string> input;
+    in-out property <string> output;
+    in-out property <bool> encode-mode: true;
+    in-out property <bool> url-safe: false;
+    callback convert();
+    callback copy-output();
+    callback paste-input();
+    callback open-from-file();
+}
+
+export global TextAndCaseState {
+    in-out property <string> input;
+    in-out property <CursorPosition> cursor-position;
+    in-out property <TextStatistics> text-statistics;
+    callback convert(int);
+    callback update-cursor(int);
+}
+
+export global HashGeneratorState {
+    in-out property <string> input;
+    in-out property <string> output;
+    in-out property <int> selected-algorithm: 0;
+    callback convert(int);
+    callback copy-output();
+    callback paste-input();
+    callback open-from-file();
+}
+
+export global ChmodState {
+    in-out property <int> numeric-notation;
+    in-out property <string> symbolic-notation;
+
+    in-out property <bool> set-uid-checked;
+    in-out property <bool> set-gid-checked;
+    in-out property <bool> set-sticy-checked;
+    in-out property <bool> set-owner-read-checked;
+    in-out property <bool> set-owner-write-checked;
+    in-out property <bool> set-owner-execute-checked;
+    in-out property <bool> set-group-read-checked;
+    in-out property <bool> set-group-write-checked;
+    in-out property <bool> set-group-execute-checked;
+    in-out property <bool> set-other-read-checked;
+    in-out property <bool> set-other-write-checked;
+    in-out property <bool> set-other-execute-checked;
+
+    callback calculate();
+}
+
+export global HtmlEncodeDecodeState {
+    in-out property <string> input;
+    in-out property <string> output;
+    in-out property <bool> encode-mode: true;
+    callback convert();
+    callback copy-output();
+    callback paste-input();
+    callback open-from-file();
+}
+
+export global SystemInfoState {
+    in-out property <string> os-name;
+    in-out property <string> os-version;
+    in-out property <string> kernel-version;
+    in-out property <string> desktop-environment;
+    in-out property <string> cpu-name;
+    in-out property <string> gpu-name;
+    in-out property <string> ram-total;
+    in-out property <string> ram-used;
+    in-out property <[DiskInfo]> disks;
+    callback copy-all();
+    callback copy-field(string);
+}
+
+export global NumberBaseState {
+    in-out property <NumberBaseData> data;
+    callback on-input(NumberBaseType);
+    callback copy-field(NumberBaseType);
+}
+
+export global SettingsState {
+    in-out property <int> current-language: 0;
+    callback set-language(int);
+}
+
+export global CalculatorState {
+    in-out property <string> expression: "";
+    in-out property <string> result: "0";
+    in-out property <bool> is-error: false;
+    in-out property <[AstNode]> ast-nodes: [];
+    in-out property <bool> has-ast: false;
+    callback append(string);
+    callback calculate();
+    callback clear();
+    callback backspace();
+    callback copy-display();
+    callback copy-ast();
+    callback keyboard-input(string);
+}
+
+export global VectorCalculatorState {
+    in-out property <VectorInput> vector-a: { x: "1", y: "0", z: "0" };
+    in-out property <VectorInput> vector-b: { x: "0", y: "1", z: "0" };
+    in-out property <string> scalar-input: "2";
+    in-out property <float> lerp-t: 0.5;
+    in-out property <string> lerp-t-display: "0.50";
+    in-out property <int> operation-index: 0;
+    in-out property <int> view-plane-index: 0;
+    in-out property <VectorResult> result;
+    in-out property <bool> shows-result-vector: false;
+    // canvas-points layout (26 floats):
+    //  0-5:  A tip + arrowhead p1/p2
+    //  6-11: B tip + arrowhead p1/p2
+    // 12-17: Result tip + arrowhead p1/p2
+    // 18-19: extra point (lerp dot, etc.)
+    // 20-25: reserved extras
+    in-out property <[float]> canvas-points: [
+        225, 200, 225, 200, 225, 200,
+        225, 200, 225, 200, 225, 200,
+        225, 200, 225, 200, 225, 200,
+        0, 0, 0, 0, 0, 0, 0, 0
+    ];
+    callback calculate();
+    callback copy-result();
+    callback swap-vectors();
+    callback view-plane-changed(int);
+}
+
+export global UnitConverterState {
+    in-out property <int> selected-category: 0;
+    in-out property <[string]> unit-names;
+    in-out property <int> from-unit-index: 0;
+    in-out property <int> to-unit-index: 1;
+    in-out property <string> input;
+    in-out property <string> output;
+    callback category-changed(int);
+    callback convert();
+    callback swap-units();
+    callback copy-output();
+}
+
+export global LoremIpsumState {
+    in-out property <int>    unit-index: 2;
+    in-out property <string> count: "3";
+    in-out property <bool>   classic-start: true;
+    in-out property <string> output;
+    callback generate();
+    callback copy-output();
+}
+
+export global UuidGeneratorState {
+    in-out property <int>    version-index: 2;
+    in-out property <string> count: "1";
+    in-out property <int>    namespace-index: 0;
+    in-out property <string> namespace-name;
+    in-out property <string> version-description;
+    in-out property <string> output;
+    in-out property <string> error;
+    callback generate();
+    callback copy-all();
+    callback copy-first();
+    callback version-changed(int);
+}
+
+export global RandomGeneratorState {
+    in-out property <int>    mode-index: 0;
+    in-out property <string> text-length: "16";
+    in-out property <string> text-count: "1";
+    in-out property <bool>   use-uppercase: true;
+    in-out property <bool>   use-lowercase: true;
+    in-out property <bool>   use-digits: true;
+    in-out property <bool>   use-special: false;
+    in-out property <int>    number-type-index: 0;
+    in-out property <string> number-count: "1";
+    in-out property <string> num-min: "0";
+    in-out property <string> num-max: "1000";
+    in-out property <string> decimal-places: "2";
+    in-out property <string> output;
+    in-out property <string> error;
+    callback generate();
+    callback copy-output();
+}
+
+export global ByteConverterState {
+    in-out property <int> from-unit-index: 2;
+    in-out property <int> to-unit-index: 8;
+    in-out property <string> input;
+    in-out property <string> output;
+    callback convert();
+    callback swap-units();
+    callback copy-output();
+}
+
+export global QrCodeState {
+    in-out property <string> input;
+    in-out property <int>    ec-level-index: 1;
+    in-out property <image>  qr-image;
+    in-out property <bool>   has-image: false;
+    in-out property <string> error;
+    callback generate();
+    callback save-png();
+    callback copy-image();
+}
+
+export global CronState {
+    in-out property <string> expression: "* * * * *";
+    in-out property <string> description;
+    in-out property <[string]> next-times;
+    in-out property <string> error;
+    in-out property <string> field-minute:  "*";
+    in-out property <string> field-hour:    "*";
+    in-out property <string> field-day:     "*";
+    in-out property <string> field-month:   "*";
+    in-out property <string> field-weekday: "*";
+    callback parse();
+    callback generate-from-builder();
+    callback copy-expression();
+}
+
+export global TextDifferState {
+    in-out property <string>     left-text;
+    in-out property <string>     right-text;
+    in-out property <[DiffLine]> diff-lines;
+    in-out property <string>     unified-output;
+    in-out property <string>     error;
+    callback diff();
+    callback copy-unified();
+    callback clear();
+}
+
+export global JwtState {
+    in-out property <bool> encode-mode: false;
+    // Decode
+    in-out property <string> token-input;
+    in-out property <string> header-json;
+    in-out property <string> payload-json;
+    in-out property <string> signature-raw;
+    in-out property <string> decode-error;
+    in-out property <int>    verify-algorithm-index: 0;
+    in-out property <string> verify-secret;
+    in-out property <int>    verify-status: 0;  // 0=none 1=valid 2=invalid 3=error
+    in-out property <string> verify-message;
+    // Encode
+    in-out property <string> encode-header: "{\n  \"alg\": \"HS256\",\n  \"typ\": \"JWT\"\n}";
+    in-out property <string> encode-payload: "{\n  \"sub\": \"1234567890\",\n  \"name\": \"John Doe\"\n}";
+    in-out property <int>    encode-algorithm-index: 0;
+    in-out property <string> encode-secret;
+    in-out property <string> encode-result;
+    in-out property <string> encode-error;
+    callback decode();
+    callback verify();
+    callback encode();
+    callback copy-result();
+    callback paste-token();
+}
+
+export global SchemaValidatorState {
+    in-out property <int>      mode: 0;  // 0=JSON 1=XML 2=YAML
+    // JSON
+    in-out property <string>   json-document;
+    in-out property <string>   json-schema;
+    // XML
+    in-out property <string>   xml-document;
+    in-out property <string>   xsd-schema;
+    // YAML
+    in-out property <string>   yaml-document;
+    in-out property <string>   yaml-schema;
+    // Results
+    in-out property <bool>     is-valid;
+    in-out property <bool>     has-result: false;
+    in-out property <[string]> errors;
+    in-out property <string>   parse-error;
+    callback validate();
+    callback pretty-print-document();
+}
+
+export global FormatterState {
+    in-out property <int>    mode: 0;  // 0=JSON 1=XML 2=YAML
+    in-out property <int>    indent-index: 0;  // 0=2 spaces 1=4 spaces 2=tab
+    in-out property <string> input;
+    in-out property <string> output;
+    in-out property <string> error;
+    callback format();
+    callback minify();
+    callback copy-output();
+    callback paste-input();
+    callback use-output-as-input();
+}
+
+export global SystemdState {
+    in-out property <int>    tab: 0;  // 0=Container 1=Volume 2=Network 3=Pod 4=Timer 5=Backup
+    // Container
+    in-out property <string> container-name;
+    in-out property <string> container-description;
+    in-out property <string> container-image;
+    in-out property <string> container-ports;
+    in-out property <string> container-volumes;
+    in-out property <string> container-environment;
+    in-out property <string> container-network;
+    in-out property <bool>   container-auto-update: true;
+    in-out property <int>    container-restart-index: 0;  // 0=always 1=on-failure 2=no
+    in-out property <bool>   container-start-on-boot: true;
+    // Volume
+    in-out property <string> volume-name;
+    in-out property <string> volume-driver;
+    in-out property <string> volume-labels;
+    // Network
+    in-out property <string> network-name;
+    in-out property <string> network-driver;
+    in-out property <string> network-subnet;
+    in-out property <string> network-gateway;
+    in-out property <bool>   network-ipv6;
+    in-out property <bool>   network-internal;
+    // Pod
+    in-out property <string> pod-name;
+    in-out property <string> pod-ports;
+    in-out property <string> pod-network;
+    in-out property <bool>   pod-start-on-boot;
+    // Timer
+    in-out property <string> timer-name;
+    in-out property <string> timer-description;
+    in-out property <string> timer-command;
+    in-out property <string> timer-working-directory;
+    in-out property <int>    timer-schedule-index: 1;  // 0=hourly 1=daily 2=weekly 3=monthly 4=custom
+    in-out property <string> timer-calendar;
+    in-out property <bool>   timer-persistent: true;
+    in-out property <string> timer-delay;
+    in-out property <bool>   timer-enable-now: true;
+    // Backup
+    in-out property <string> backup-name;
+    in-out property <int>    backup-source-index: 0;  // 0=directory 1=Podman volume
+    in-out property <string> backup-source;
+    in-out property <string> backup-target;
+    in-out property <int>    backup-compression-index: 1;  // 0=gz 1=zst 2=xz
+    in-out property <string> backup-keep-days: "14";
+    in-out property <int>    backup-schedule-index: 1;  // 0=hourly 1=daily 2=weekly 3=monthly 4=custom
+    in-out property <string> backup-calendar;
+    in-out property <bool>   backup-enable-now: true;
+    // Result
+    in-out property <string> output;
+    in-out property <string> file-name;
+    in-out property <string> secondary-output;
+    in-out property <string> secondary-file-name;
+    in-out property <bool>   show-secondary;
+    in-out property <string> error;
+    in-out property <string> status;
+    in-out property <bool>   status-is-error;
+    callback generate();
+    callback copy-output();
+    callback save-output();
+    callback install-output();
+}
+
+export global ColorImageConverterState {
+    in-out property <bool>   image-mode: false;
+    // Color
+    in-out property <string> color-input: "#1a2b3c";
+    in-out property <color>  color-swatch: #1a2b3c;
+    in-out property <bool>   color-valid: false;
+    in-out property <string> color-hex;
+    in-out property <string> color-rgb;
+    in-out property <string> color-hsl;
+    in-out property <string> color-hsv;
+    in-out property <string> color-cmyk;
+    in-out property <string> color-css-name;
+    in-out property <string> color-error;
+    callback parse-color();
+    callback copy-color(int);   // 0=hex 1=rgb 2=hsl 3=hsv 4=cmyk 5=css
+    // Image
+    in-out property <string> image-path;
+    in-out property <string> image-info;
+    in-out property <bool>   has-image: false;
+    in-out property <int>    output-format-index: 0;   // 0=PNG 1=JPEG 2=WebP 3=BMP
+    in-out property <int>    jpeg-quality: 85;
+    in-out property <bool>   resize-enabled: false;
+    in-out property <string> resize-width;
+    in-out property <string> resize-height;
+    in-out property <bool>   keep-aspect-ratio: true;
+    in-out property <string> image-status;
+    callback open-image();
+    callback convert-image();
+}
+
+export global RegexTesterState {
+    in-out property <string> pattern;
+    in-out property <bool> flag-case-insensitive: false;
+    in-out property <bool> flag-multiline: false;
+    in-out property <bool> flag-dot-all: false;
+    in-out property <bool> replace-mode: false;
+    in-out property <string> test-input;
+    in-out property <string> replacement;
+    in-out property <string> output;
+    in-out property <string> match-label;
+    in-out property <string> error;
+    callback run();
+    callback copy-output();
+}
+
+export global TimestampState {
+    in-out property <string>      input;
+    in-out property <int>         zone-index: 0;
+    in-out property <[ResultRow]> rows;
+    in-out property <string>      error;
+    callback convert();
+    callback now();
+    callback copy(string);
+}
+
+export global UrlState {
+    in-out property <string>      input;
+    in-out property <int>         mode-index: 0;  // 0=encode component 1=encode URL 2=decode 3=decode form data 4=parse
+    in-out property <string>      output;
+    in-out property <[ResultRow]> rows;
+    in-out property <string>      error;
+    callback convert();
+    callback copy-output();
+    callback paste-input();
+    callback copy(string);
+}
+
+export global FormatConverterState {
+    in-out property <int>    source-index: 0;  // 0=JSON 1=YAML 2=TOML 3=CSV 4=XML
+    in-out property <int>    target-index: 1;
+    in-out property <int>    delimiter-index: 0;  // 0=comma 1=semicolon 2=tab (CSV only)
+    in-out property <string> input;
+    in-out property <string> output;
+    in-out property <string> error;
+    callback convert();
+    callback swap();
+    callback copy-output();
+    callback paste-input();
+}
+
+export global PathQueryState {
+    in-out property <int>         mode-index: 0;  // 0=JSONPath 1=XPath
+    in-out property <string>      document;
+    in-out property <string>      expression;
+    in-out property <[ResultRow]> rows;
+    in-out property <string>      summary;
+    in-out property <string>      error;
+    callback run();
+    callback paste-document();
+    callback copy(string);
+}
+
+export global CidrState {
+    in-out property <string>      network;
+    in-out property <string>      check-address;
+    in-out property <string>      split-prefix;
+    in-out property <[ResultRow]> rows;
+    in-out property <string>      contains-result;
+    in-out property <bool>        contains-ok;
+    in-out property <[ResultRow]> subnets;
+    in-out property <string>      subnets-note;
+    in-out property <string>      error;
+    callback calculate();
+    callback copy(string);
+}
+
+export global CertificateState {
+    in-out property <string>      input;
+    in-out property <[ResultRow]> rows;
+    in-out property <string>      error;
+    callback decode();
+    callback paste-input();
+    callback open-file();
+    callback copy(string);
+}
+
+export global SecurityState {
+    in-out property <int>         mode-index: 0;  // 0=HMAC 1=password 2=passphrase
+    // HMAC
+    in-out property <string>      hmac-message;
+    in-out property <string>      hmac-key;
+    in-out property <bool>        hmac-key-hex;
+    in-out property <int>         hmac-algorithm-index: 2;  // 0=MD5 1=SHA-1 2=SHA-256 3=SHA-512
+    // Password
+    in-out property <string>      password-length: "20";
+    in-out property <bool>        password-lower: true;
+    in-out property <bool>        password-upper: true;
+    in-out property <bool>        password-digits: true;
+    in-out property <bool>        password-symbols: true;
+    in-out property <bool>        password-no-look-alikes: true;
+    // Passphrase
+    in-out property <string>      passphrase-words: "5";
+    in-out property <string>      passphrase-separator: "-";
+    in-out property <bool>        passphrase-capitalize: true;
+    in-out property <bool>        passphrase-digit: true;
+    // Shared
+    in-out property <string>      count: "5";
+    in-out property <[ResultRow]> rows;
+    in-out property <string>      note;
+    in-out property <string>      error;
+    callback generate();
+    callback copy(string);
+}
+
+export global EscapeState {
+    in-out property <int>    target-index: 0;  // see Target::from_index
+    in-out property <bool>   unescape-mode: false;
+    in-out property <string> input;
+    in-out property <string> output;
+    in-out property <string> error;
+    callback convert();
+    callback swap();
+    callback copy-output();
+    callback paste-input();
+}
+
+export global MarkdownState {
+    in-out property <string>    input;
+    in-out property <[MdBlock]> blocks;
+    callback render();
+    callback paste-input();
+    callback open-file();
+    callback copy-html();
+    callback open-in-browser();
+}
+
+export global SqlFormatterState {
+    in-out property <int>    indent-index: 0;  // 0=2 spaces 1=4 spaces 2=tab
+    in-out property <int>    case-index: 1;  // 0=keep 1=upper 2=lower
+    in-out property <int>    dialect-index: 0;  // 0=generic 1=PostgreSQL 2=SQL Server
+    in-out property <string> input;
+    in-out property <string> output;
+    callback format();
+    callback minify();
+    callback copy-output();
+    callback paste-input();
+    callback use-output-as-input();
+}
+
+export global HexViewerState {
+    in-out property <string>      dump;
+    in-out property <[ResultRow]> facts;
+    in-out property <[ResultRow]> matches;
+    in-out property <string>      window-info;
+    in-out property <string>      offset-text;
+    in-out property <string>      search-text;
+    in-out property <bool>        search-is-hex: false;
+    in-out property <bool>        has-data: false;
+    in-out property <bool>        can-prev: false;
+    in-out property <bool>        can-next: false;
+    in-out property <string>      error;
+    callback open-file();
+    callback paste-text();
+    callback paste-hex();
+    callback go-to();
+    callback find();
+    callback prev-page();
+    callback next-page();
+    callback copy-dump();
+    callback copy(string);
+}
+
+export global IdToolsState {
+    in-out property <int>         mode-index: 0;  // 0=ULID 1=NanoID 2=Snowflake
+    in-out property <string>      count: "5";
+    // ULID
+    in-out property <string>      ulid-input;
+    // NanoID
+    in-out property <string>      nanoid-length: "21";
+    in-out property <int>         nanoid-alphabet-index: 0;  // 0=URL-safe 1=alphanumeric 2=lowercase 3=digits 4=hex 5=custom
+    in-out property <string>      nanoid-custom;
+    // Snowflake
+    in-out property <string>      snowflake-input;
+    in-out property <int>         snowflake-epoch-index: 0;  // 0=Twitter 1=Discord 2=Unix 3=custom
+    in-out property <string>      snowflake-custom-epoch;
+    in-out property <string>      snowflake-time;
+    // Results
+    in-out property <[ResultRow]> rows;
+    in-out property <[ResultRow]> decoded;
+    in-out property <string>      note;
+    in-out property <string>      error;
+    callback generate();
+    callback decode();
+    callback snowflake-from-time();
+    callback copy(string);
+}
+
+export global CssToolsState {
+    in-out property <int>         mode-index: 0;  // 0=units 1=contrast
+    // Units
+    in-out property <string>      value: "1";
+    in-out property <int>         unit-index: 1;  // see CssTools UNITS
+    in-out property <string>      root-size: "16";
+    in-out property <string>      parent-size: "16";
+    in-out property <string>      viewport-width: "1920";
+    in-out property <string>      viewport-height: "1080";
+    // Contrast
+    in-out property <string>      foreground: "#1a2b3c";
+    in-out property <string>      background: "#ffffff";
+    in-out property <color>       foreground-color: #1a2b3c;
+    in-out property <color>       background-color: #ffffff;
+    in-out property <bool>        contrast-ok: true;
+    // Results
+    in-out property <[ResultRow]> rows;
+    in-out property <string>      error;
+    callback convert();
+    callback swap-colors();
+    callback copy(string);
+}
+
+export global CompressionState {
+    in-out property <bool>   decompress-mode: false;
+    in-out property <int>    format-index: 0;  // 0=gzip 1=zlib 2=raw deflate
+    in-out property <int>    level-index: 1;  // 0=fast 1=default 2=best
+    in-out property <int>    encoding-index: 0;  // 0=Base64 1=hex
+    in-out property <string> input;
+    in-out property <string> output;
+    in-out property <string> info;
+    in-out property <string> error;
+    callback run();
+    callback swap();
+    callback copy-output();
+    callback paste-input();
+}
+
+export global NavSearch {
+    in-out property <string> query;
+    // Collapsed group names, each wrapped in `|` (e.g. "|Security|Generators|"); kept in sync with the config by Rust.
+    in-out property <string> collapsed;
+    callback toggle-group(string);
+    pure callback is-collapsed(string, string) -> bool;
+    // True when every word of the query occurs in the haystack (implemented in Rust, Slint has no `contains`).
+    pure callback matches(string, string) -> bool;
+}

@@ -1,0 +1,189 @@
+import { Button, ScrollView } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { SeparatorLine } from "../components/separator-line.slint";
+import { AdvancedTextEdit } from "../components/advanced-text-edit.slint";
+import { SchemaValidatorState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+export component SchemaValidatorPage inherits PageContainer {
+    title-text: @tr("Schema Validator");
+    subtitle-text: @tr("Validate JSON, XML and YAML documents against schemas");
+
+    // Mode tabs
+    HorizontalLayout {
+        spacing: Theme.space-sm;
+        alignment: start;
+
+        Button {
+            text: "JSON";
+            primary: SchemaValidatorState.mode == 0;
+            clicked => {
+                SchemaValidatorState.mode = 0;
+            }
+        }
+
+        Button {
+            text: "XML";
+            primary: SchemaValidatorState.mode == 1;
+            clicked => {
+                SchemaValidatorState.mode = 1;
+            }
+        }
+
+        Button {
+            text: "YAML";
+            primary: SchemaValidatorState.mode == 2;
+            clicked => {
+                SchemaValidatorState.mode = 2;
+            }
+        }
+    }
+
+    if SchemaValidatorState.mode == 1: Text {
+        text: @tr("XML is validated against the XSD (XSD 1.1). Without an XSD only well-formedness is checked. xs:include/xs:import of external files are not resolved.");
+        font-size: Theme.font-xs;
+        color: Theme.color-muted;
+        wrap: word-wrap;
+    }
+
+    if SchemaValidatorState.mode == 2: Text {
+        text: @tr("YAML is validated against a JSON Schema, which may be written as YAML or JSON.");
+        font-size: Theme.font-xs;
+        color: Theme.color-muted;
+        wrap: word-wrap;
+    }
+
+    SeparatorLine { }
+
+    // Document + Schema
+    HorizontalLayout {
+        spacing: Theme.space-md;
+        vertical-stretch: 1;
+
+        VerticalLayout {
+            spacing: Theme.space-xs;
+            horizontal-stretch: 1;
+
+            Text {
+                text: @tr("Document");
+                font-size: Theme.font-sm;
+                color: Theme.color-muted;
+            }
+
+            if SchemaValidatorState.mode == 0: AdvancedTextEdit {
+                text <=> SchemaValidatorState.json-document;
+                placeholder-text: "{ }";
+                font-family: "monospace";
+                font-size: Theme.font-sm;
+                vertical-stretch: 1;
+            }
+
+            if SchemaValidatorState.mode == 1: AdvancedTextEdit {
+                text <=> SchemaValidatorState.xml-document;
+                placeholder-text: "<root></root>";
+                font-family: "monospace";
+                font-size: Theme.font-sm;
+                vertical-stretch: 1;
+            }
+
+            if SchemaValidatorState.mode == 2: AdvancedTextEdit {
+                text <=> SchemaValidatorState.yaml-document;
+                placeholder-text: "key: value";
+                font-family: "monospace";
+                font-size: Theme.font-sm;
+                vertical-stretch: 1;
+            }
+        }
+
+        VerticalLayout {
+            spacing: Theme.space-xs;
+            horizontal-stretch: 1;
+
+            Text {
+                text: SchemaValidatorState.mode == 1 ? @tr("XSD Schema (optional)") : @tr("JSON Schema");
+                font-size: Theme.font-sm;
+                color: Theme.color-muted;
+            }
+
+            if SchemaValidatorState.mode == 0: AdvancedTextEdit {
+                text <=> SchemaValidatorState.json-schema;
+                placeholder-text: "{ \"type\": \"object\" }";
+                font-family: "monospace";
+                font-size: Theme.font-sm;
+                vertical-stretch: 1;
+            }
+
+            if SchemaValidatorState.mode == 1: AdvancedTextEdit {
+                text <=> SchemaValidatorState.xsd-schema;
+                placeholder-text: "<xs:schema …>";
+                font-family: "monospace";
+                font-size: Theme.font-sm;
+                vertical-stretch: 1;
+            }
+
+            if SchemaValidatorState.mode == 2: AdvancedTextEdit {
+                text <=> SchemaValidatorState.yaml-schema;
+                placeholder-text: "type: object";
+                font-family: "monospace";
+                font-size: Theme.font-sm;
+                vertical-stretch: 1;
+            }
+        }
+    }
+
+    HorizontalLayout {
+        spacing: Theme.space-sm;
+        alignment: end;
+
+        Button {
+            text: @tr("Pretty-print");
+            clicked => {
+                SchemaValidatorState.pretty-print-document();
+            }
+        }
+
+        Button {
+            text: @tr("Validate");
+            primary: true;
+            clicked => {
+                SchemaValidatorState.validate();
+            }
+        }
+    }
+
+    if !SchemaValidatorState.parse-error.is-empty: Text {
+        text: SchemaValidatorState.parse-error;
+        font-size: Theme.font-sm;
+        color: #e05050;
+        wrap: word-wrap;
+    }
+
+    if SchemaValidatorState.has-result && SchemaValidatorState.is-valid: Text {
+        text: "✓ " + @tr("Valid");
+        color: #4caf50;
+        font-size: Theme.font-md;
+    }
+
+    if SchemaValidatorState.has-result && !SchemaValidatorState.is-valid: VerticalLayout {
+        spacing: Theme.space-xs;
+        max-height: 180px;
+
+        Text {
+            text: "✗ " + @tr("{} error(s)", SchemaValidatorState.errors.length);
+            color: #e05050;
+            font-size: Theme.font-md;
+        }
+
+        ScrollView {
+            VerticalLayout {
+                spacing: 2px;
+                for err in SchemaValidatorState.errors: Text {
+                    text: "• " + err;
+                    font-size: Theme.font-sm;
+                    font-family: "monospace";
+                    wrap: word-wrap;
+                }
+            }
+        }
+    }
+}

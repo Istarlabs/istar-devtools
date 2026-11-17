@@ -1,0 +1,218 @@
+import { SideMenu } from "side-menu.slint";
+import { IconSet } from "@lucide";
+import { LineEdit } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import {
+    AppPages,
+    NavItem,
+    DiskInfo,
+    NumberBaseData,
+    NumberBaseType,
+    AstNode,
+} from "types.slint";
+import { HomePage } from "pages/home.slint";
+import { InfoPage } from "pages/info.slint";
+import { SettingsPage } from "pages/settings.slint";
+import { Base64EncoderDecoder } from "pages/base64.slint";
+import {
+    Base64State,
+    TextAndCaseState,
+    HashGeneratorState,
+    ChmodState,
+    HtmlEncodeDecodeState,
+    SystemInfoState,
+    NumberBaseState,
+    UnitConverterState,
+    ByteConverterState,
+    LoremIpsumState,
+    UuidGeneratorState,
+    RandomGeneratorState,
+    QrCodeState,
+    CronState,
+    RegexTesterState,
+    TextDifferState,
+    SettingsState,
+    CalculatorState,
+    VectorCalculatorState,
+    LicenseState,
+    JwtState,
+    SchemaValidatorState,
+    ColorImageConverterState,
+    FormatterState,
+    SystemdState,
+    TimestampState,
+    UrlState,
+    FormatConverterState,
+    PathQueryState,
+    CidrState,
+    CertificateState,
+    SecurityState,
+    EscapeState,
+    MarkdownState,
+    SqlFormatterState,
+    HexViewerState,
+    IdToolsState,
+    CssToolsState,
+    CompressionState,
+    NavSearch,
+} from "globals.slint";
+import { CursorPosition, TextStatistics, ResultRow, MdBlock, VectorInput, VectorResult, LicenseDep, DiffLine, DiffLineKind } from "types.slint";
+import { TextInspector } from "pages/text-inspector.slint";
+import { HashGenerator } from "pages/hash-generator.slint";
+import { ChmodNotation } from "pages/chmod-notation.slint";
+import { HtmlEncodeDecode } from "pages/html-encode-decode.slint";
+import { SystemInfoPage } from "pages/system-info.slint";
+import { NumberBasePage } from "pages/number-base.slint";
+import { UnitConverterPage } from "pages/unit-converter.slint";
+import { CalculatorPage } from "pages/calculator.slint";
+import { VectorCalculatorPage } from "pages/vector-calculator.slint";
+import { LoremIpsumPage } from "pages/lorem-ipsum.slint";
+import { UuidGeneratorPage } from "pages/uuid-generator.slint";
+import { RandomGeneratorPage } from "pages/random-generator.slint";
+import { CronPage } from "pages/cron.slint";
+import { QrCodePage } from "pages/qr-code.slint";
+import { RegexTesterPage } from "pages/regex-tester.slint";
+import { TextDifferPage } from "pages/text-differ.slint";
+import { JwtPage } from "pages/jwt.slint";
+import { SchemaValidatorPage } from "pages/schema-validator.slint";
+import { SystemdPage } from "pages/systemd.slint";
+import { FormatterPage } from "pages/formatter.slint";
+import { TimestampPage } from "pages/timestamp.slint";
+import { UrlPage } from "pages/url-tools.slint";
+import { FormatConverterPage } from "pages/format-converter.slint";
+import { PathQueryPage } from "pages/path-query.slint";
+import { CidrPage } from "pages/cidr.slint";
+import { CertificatePage } from "pages/certificate.slint";
+import { SecurityPage } from "pages/security.slint";
+import { EscapePage } from "pages/string-escape.slint";
+import { MarkdownPage } from "pages/markdown-preview.slint";
+import { SqlFormatterPage } from "pages/sql-formatter.slint";
+import { HexViewerPage } from "pages/hex-viewer.slint";
+import { IdToolsPage } from "pages/id-tools.slint";
+import { CssToolsPage } from "pages/css-tools.slint";
+import { CompressionPage } from "pages/compression.slint";
+import { ColorImageConverterPage } from "pages/color-image-converter.slint";
+
+export {CursorPosition, TextStatistics, ResultRow, MdBlock}
+export {Base64State, TextAndCaseState, HashGeneratorState, ChmodState, HtmlEncodeDecodeState, SystemInfoState, DiskInfo, NumberBaseState, NumberBaseData, NumberBaseType, UnitConverterState, ByteConverterState, LoremIpsumState, UuidGeneratorState, RandomGeneratorState, QrCodeState, CronState, RegexTesterState, TextDifferState, SettingsState, CalculatorState, AstNode, AppPages, VectorCalculatorState, VectorInput, VectorResult, LicenseState, LicenseDep, DiffLine, DiffLineKind, JwtState, SchemaValidatorState, ColorImageConverterState, FormatterState, SystemdState, TimestampState, UrlState, FormatConverterState, PathQueryState, CidrState, CertificateState, SecurityState, EscapeState, MarkdownState, SqlFormatterState, HexViewerState, IdToolsState, CssToolsState, CompressionState, NavSearch}
+
+export component AppWindow inherits Window {
+    // Shown in the task bar and the window switcher; without it Slint says "Slint Window".
+    title: "Dev Tools";
+    min-height: 720px;
+    min-width: 1280px;
+
+    in-out property <AppPages> current-page: AppPages.Home;
+    callback page-selected(AppPages);
+
+    VerticalLayout {
+        Rectangle {
+            height: 48px;
+            background: Theme.color-surface;
+
+            LineEdit {
+                x: (parent.width - self.width) / 2;
+                y: (parent.height - self.height) / 2;
+                width: min(420px, parent.width - 2 * Theme.space-lg);
+                placeholder-text: @tr("Search tools");
+                text <=> NavSearch.query;
+            }
+        }
+
+        HorizontalLayout {
+            menu := SideMenu {
+                model: [
+                    { text: @tr("Get Started"), group: @tr("Start"), tags: "start welcome overview", image: IconSet.House, page: AppPages.Home },
+                    { text: @tr("Base64"), group: @tr("Text & Encoding"), tags: "base64 encode decode binary text", image: IconSet.Binary, page: AppPages.Base64 },
+                    { text: @tr("URL"), group: @tr("Text & Encoding"), tags: "url uri encode decode percent query parse", image: IconSet.Link, page: AppPages.Url },
+                    { text: @tr("HTML"), group: @tr("Text & Encoding"), tags: "html entities escape encode decode", image: IconSet.FileCode, page: AppPages.Html },
+                    { text: @tr("Escape"), group: @tr("Text & Encoding"), tags: "escape unescape string quote json csv regex", image: IconSet.Terminal, page: AppPages.Escape },
+                    { text: @tr("Text Inspector"), group: @tr("Text & Encoding"), tags: "text inspector count characters words lines case upper lower", image: IconSet.ScrollText, page: AppPages.TextInspector },
+                    { text: @tr("Text Diff"), group: @tr("Text & Encoding"), tags: "diff compare text changes", image: IconSet.GitCompare, page: AppPages.TextDiffer },
+                    { text: @tr("Markdown"), group: @tr("Text & Encoding"), tags: "markdown md preview html", image: IconSet.FileText, page: AppPages.Markdown },
+                    { text: @tr("Regex"), group: @tr("Text & Encoding"), tags: "regex regular expression pattern match", image: IconSet.Regex, page: AppPages.RegexTester },
+                    { text: @tr("Lorem Ipsum"), group: @tr("Text & Encoding"), tags: "lorem ipsum placeholder dummy text", image: IconSet.Pilcrow, page: AppPages.LoremIpsum },
+                    { text: @tr("Converter"), group: @tr("Data & Formats"), tags: "convert json yaml toml csv xml format", image: IconSet.Route, page: AppPages.FormatConverter },
+                    { text: @tr("Formatter"), group: @tr("Data & Formats"), tags: "format beautify minify pretty json xml", image: IconSet.Braces, page: AppPages.Formatter },
+                    { text: @tr("Path Query"), group: @tr("Data & Formats"), tags: "jsonpath xpath query json xml path", image: IconSet.Search, page: AppPages.PathQuery },
+                    { text: @tr("Schema Validator"), group: @tr("Data & Formats"), tags: "schema validate validation json xml xsd", image: IconSet.FileCheck, page: AppPages.SchemaValidator },
+                    { text: @tr("SQL"), group: @tr("Data & Formats"), tags: "sql format minify database query", image: IconSet.Database, page: AppPages.SqlFormatter },
+                    { text: @tr("Hex Viewer"), group: @tr("Data & Formats"), tags: "hex viewer bytes binary file dump", image: IconSet.Binary, page: AppPages.HexViewer },
+                    { text: @tr("Compress"), group: @tr("Data & Formats"), tags: "compress gzip zlib deflate decompress", image: IconSet.FileArchive, page: AppPages.Compression },
+                    { text: @tr("Hash Generator"), group: @tr("Security"), tags: "hash md5 sha1 sha256 sha512 sha3 crc adler checksum", image: IconSet.Lock, page: AppPages.HashGenerator },
+                    { text: @tr("HMAC & Passwords"), group: @tr("Security"), tags: "hmac password passphrase secret key sha", image: IconSet.FileKey, page: AppPages.Security },
+                    { text: @tr("JWT"), group: @tr("Security"), tags: "jwt token json web token bearer auth", image: IconSet.KeyRound, page: AppPages.Jwt },
+                    { text: @tr("Certificate"), group: @tr("Security"), tags: "certificate x509 pem tls ssl cert", image: IconSet.ShieldCheck, page: AppPages.Certificate },
+                    { text: @tr("UUID"), group: @tr("Generators"), tags: "uuid guid identifier v4 v7 generate", image: IconSet.IdCard, page: AppPages.UuidGenerator },
+                    { text: @tr("ULID / NanoID"), group: @tr("Generators"), tags: "ulid nanoid snowflake id identifier generate", image: IconSet.Barcode, page: AppPages.IdTools },
+                    { text: @tr("Random"), group: @tr("Generators"), tags: "random number string password dice generate", image: IconSet.Shuffle, page: AppPages.RandomGenerator },
+                    { text: @tr("Timestamp"), group: @tr("Time & Scheduling"), tags: "timestamp unix epoch date time datetime timezone", image: IconSet.Clock, page: AppPages.Timestamp },
+                    { text: @tr("CRON"), group: @tr("Time & Scheduling"), tags: "cron schedule crontab expression job", image: IconSet.Timer, page: AppPages.Cron },
+                    { text: @tr("Systemd"), group: @tr("Time & Scheduling"), tags: "systemd podman quadlet container unit service timer backup linux", image: IconSet.Server, page: AppPages.Systemd },
+                    { text: @tr("Calculator"), group: @tr("Numbers & Units"), tags: "calculator math expression", image: IconSet.Calculator, page: AppPages.Calculator },
+                    { text: @tr("Vector Calc"), group: @tr("Numbers & Units"), tags: "vector math matrix geometry", image: IconSet.Shapes, page: AppPages.VectorCalculator },
+                    { text: @tr("Number Base"), group: @tr("Numbers & Units"), tags: "number base binary hex octal decimal ascii utf8", image: IconSet.Hash, page: AppPages.NumberBase },
+                    { text: @tr("Unit Converter"), group: @tr("Numbers & Units"), tags: "unit convert length weight temperature bytes", image: IconSet.Ruler, page: AppPages.UnitConverter },
+                    { text: @tr("Color & Image"), group: @tr("Color & Media"), tags: "color image convert hex rgb hsl png jpeg", image: IconSet.Palette, page: AppPages.ColorImage },
+                    { text: @tr("CSS"), group: @tr("Color & Media"), tags: "css px rem em units contrast wcag color accessibility", image: IconSet.Contrast, page: AppPages.CssTools },
+                    { text: @tr("QR Code"), group: @tr("Color & Media"), tags: "qr code barcode image generate", image: IconSet.QrCode, page: AppPages.QrCode },
+                    { text: @tr("System Info"), group: @tr("System & Network"), tags: "system info cpu ram memory disk os hardware", image: IconSet.PcCase, page: AppPages.SystemInfo },
+                    { text: @tr("Chmod-Notation"), group: @tr("System & Network"), tags: "chmod permissions unix file mode linux octal", image: IconSet.File, page: AppPages.Chmod },
+                    { text: @tr("CIDR"), group: @tr("System & Network"), tags: "cidr subnet network ip netmask ipv4 ipv6", image: IconSet.Network, page: AppPages.Cidr },
+                    { text: @tr("Info"), group: @tr("App"), tags: "info about license version", image: IconSet.CircleQuestionMark, page: AppPages.Info },
+                    { text: @tr("Settings"), group: @tr("App"), tags: "settings language preferences", image: IconSet.Settings, page: AppPages.Settings },
+                ];
+                activated(page) => {
+                    current-page = page;
+                    root.page-selected(page);
+                }
+            }
+
+            // Content area — pages fill the remaining space, no padding-left needed
+            Rectangle {
+                horizontal-stretch: 1;
+                clip: true;
+
+                if current-page == AppPages.Home:         HomePage { }
+                if current-page == AppPages.Base64:       Base64EncoderDecoder { }
+                if current-page == AppPages.TextInspector: TextInspector { }
+                if current-page == AppPages.HashGenerator: HashGenerator { }
+                if current-page == AppPages.Chmod:        ChmodNotation { }
+                if current-page == AppPages.Html:         HtmlEncodeDecode { }
+                if current-page == AppPages.SystemInfo:   SystemInfoPage { }
+                if current-page == AppPages.NumberBase:   NumberBasePage { }
+                if current-page == AppPages.UnitConverter: UnitConverterPage { }
+                if current-page == AppPages.Calculator:       CalculatorPage { }
+                if current-page == AppPages.VectorCalculator: VectorCalculatorPage { }
+                if current-page == AppPages.LoremIpsum:       LoremIpsumPage { }
+                if current-page == AppPages.UuidGenerator:    UuidGeneratorPage { }
+                if current-page == AppPages.RandomGenerator:  RandomGeneratorPage { }
+                if current-page == AppPages.QrCode:           QrCodePage { }
+                if current-page == AppPages.Cron:             CronPage { }
+                if current-page == AppPages.RegexTester:      RegexTesterPage { }
+                if current-page == AppPages.TextDiffer:       TextDifferPage { }
+                if current-page == AppPages.Jwt:              JwtPage { }
+                if current-page == AppPages.SchemaValidator:  SchemaValidatorPage { }
+                if current-page == AppPages.Formatter:        FormatterPage { }
+                if current-page == AppPages.Systemd:          SystemdPage { }
+                if current-page == AppPages.Timestamp:               TimestampPage { }
+                if current-page == AppPages.Url:                     UrlPage { }
+                if current-page == AppPages.FormatConverter:         FormatConverterPage { }
+                if current-page == AppPages.PathQuery:               PathQueryPage { }
+                if current-page == AppPages.Cidr:                    CidrPage { }
+                if current-page == AppPages.Certificate:             CertificatePage { }
+                if current-page == AppPages.Security:                SecurityPage { }
+                if current-page == AppPages.Escape:                  EscapePage { }
+                if current-page == AppPages.Markdown:                MarkdownPage { }
+                if current-page == AppPages.SqlFormatter:            SqlFormatterPage { }
+                if current-page == AppPages.HexViewer:               HexViewerPage { }
+                if current-page == AppPages.IdTools:                 IdToolsPage { }
+                if current-page == AppPages.CssTools:                CssToolsPage { }
+                if current-page == AppPages.Compression:             CompressionPage { }
+                if current-page == AppPages.ColorImage:       ColorImageConverterPage { }
+                if current-page == AppPages.Info:             InfoPage { }
+                if current-page == AppPages.Settings:     SettingsPage { }
+            }
+        }
+    }
+}

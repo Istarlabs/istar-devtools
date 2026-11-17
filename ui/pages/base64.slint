@@ -1,0 +1,62 @@
+import { Switch } from "std-widgets.slint";
+import { SeparatorLine } from "../components/separator-line.slint";
+import { Base64State } from "../globals.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { InputOutputPanel } from "../components/input-output-panel.slint";
+import { Theme } from "../theme.slint";
+
+export component Base64EncoderDecoder inherits PageContainer {
+    title-text: @tr("Base64 Encoder & Decoder");
+    subtitle-text: @tr("Encode and decode strings using the Base64 format");
+
+    HorizontalLayout {
+        spacing: Theme.space-xl;
+        alignment: start;
+
+        HorizontalLayout {
+            spacing: Theme.space-sm;
+            Text {
+                text: Base64State.encode-mode ? @tr("Encoding") : @tr("Decoding");
+                vertical-alignment: center;
+            }
+
+            Switch {
+                checked <=> Base64State.encode-mode;
+                toggled => {
+                    Base64State.convert();
+                }
+            }
+        }
+
+        HorizontalLayout {
+            spacing: Theme.space-sm;
+            Text {
+                text: @tr("URL Safe");
+                vertical-alignment: center;
+            }
+
+            Switch {
+                checked <=> Base64State.url-safe;
+                toggled => {
+                    Base64State.convert();
+                }
+            }
+        }
+    }
+
+    SeparatorLine { }
+
+    InputOutputPanel {
+        input-text <=> Base64State.input;
+        output-text <=> Base64State.output;
+        open-file => {
+            Base64State.open-from-file();
+        }
+        paste => {
+            Base64State.paste-input();
+        }
+        copy => {
+            Base64State.copy-output();
+        }
+    }
+}

@@ -1,0 +1,96 @@
+import { ComboBox, LineEdit, Button } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { SeparatorLine } from "../components/separator-line.slint";
+import { QrCodeState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+export component QrCodePage inherits PageContainer {
+    title-text: @tr("QR Code Generator");
+    subtitle-text: @tr("Encode text or URLs as a QR code image");
+
+    HorizontalLayout {
+        spacing: Theme.space-md;
+
+        Text {
+            text: @tr("Input");
+            vertical-alignment: center;
+        }
+
+        LineEdit {
+            text <=> QrCodeState.input;
+            placeholder-text: @tr("Enter text or URL…");
+            horizontal-stretch: 1;
+        }
+
+        Text {
+            text: @tr("Error Correction");
+            vertical-alignment: center;
+        }
+
+        ComboBox {
+            model: ["L — 7%", "M — 15%", "Q — 25%", "H — 30%"];
+            current-index <=> QrCodeState.ec-level-index;
+        }
+
+        Button {
+            text: @tr("Generate");
+            primary: true;
+            clicked => {
+                QrCodeState.generate();
+            }
+        }
+    }
+
+    if !QrCodeState.error.is-empty: Text {
+        text: QrCodeState.error;
+        font-size: Theme.font-sm;
+        color: #e05050;
+        wrap: word-wrap;
+    }
+
+    SeparatorLine { }
+
+    Rectangle {
+        vertical-stretch: 1;
+        background: transparent;
+
+        if QrCodeState.has-image: Image {
+            source: QrCodeState.qr-image;
+            image-fit: contain;
+            width: min(parent.width, parent.height) - 48px;
+            height: self.width;
+            x: (parent.width - self.width) / 2;
+            y: (parent.height - self.height) / 2;
+        }
+
+        if !QrCodeState.has-image: Text {
+            text: @tr("QR code will appear here");
+            color: Theme.color-muted;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+            width: parent.width;
+            height: parent.height;
+        }
+    }
+
+    HorizontalLayout {
+        alignment: end;
+        spacing: Theme.space-sm;
+
+        Button {
+            text: @tr("Save PNG");
+            enabled: QrCodeState.has-image;
+            clicked => {
+                QrCodeState.save-png();
+            }
+        }
+
+        Button {
+            text: @tr("Copy Image");
+            enabled: QrCodeState.has-image;
+            clicked => {
+                QrCodeState.copy-image();
+            }
+        }
+    }
+}

@@ -1,0 +1,180 @@
+import { Button, ComboBox, LineEdit } from "std-widgets.slint";
+import { PageContainer } from "../components/page-container.slint";
+import { ResultList } from "../components/result-list.slint";
+import { CssToolsState } from "../globals.slint";
+import { Theme } from "../theme.slint";
+
+component Labeled inherits VerticalLayout {
+    in property <string> label;
+    in-out property <string> value;
+    in property <string> placeholder;
+    in property <length> field-width: 110px;
+    callback edited();
+
+    spacing: Theme.space-xs;
+
+    Text {
+        text: root.label;
+        font-size: Theme.font-xs;
+        color: Theme.color-subtle;
+    }
+
+    LineEdit {
+        text <=> root.value;
+        placeholder-text: root.placeholder;
+        font-size: Theme.font-sm;
+        width: root.field-width;
+        edited(_) => {
+            root.edited();
+        }
+    }
+}
+
+export component CssToolsPage inherits PageContainer {
+    title-text: @tr("CSS");
+    subtitle-text: @tr("Convert CSS units and check colour contrast");
+
+    HorizontalLayout {
+        spacing: Theme.space-sm;
+        alignment: start;
+
+        Button {
+            text: @tr("Units");
+            primary: CssToolsState.mode-index == 0;
+            clicked => {
+                CssToolsState.mode-index = 0;
+                CssToolsState.convert();
+            }
+        }
+        Button {
+            text: @tr("Contrast");
+            primary: CssToolsState.mode-index == 1;
+            clicked => {
+                CssToolsState.mode-index = 1;
+                CssToolsState.convert();
+            }
+        }
+    }
+
+    if CssToolsState.mode-index == 0: HorizontalLayout {
+        spacing: Theme.space-md;
+        alignment: start;
+
+        Labeled {
+            label: @tr("Value");
+            value <=> CssToolsState.value;
+            edited => {
+                CssToolsState.convert();
+            }
+        }
+        VerticalLayout {
+            spacing: Theme.space-xs;
+            Text {
+                text: @tr("Unit");
+                font-size: Theme.font-xs;
+                color: Theme.color-subtle;
+            }
+            ComboBox {
+                model: ["px", "rem", "em", "pt", "pc", "in", "cm", "mm", "vw", "vh"];
+                current-index <=> CssToolsState.unit-index;
+                selected(_) => {
+                    CssToolsState.convert();
+                }
+            }
+        }
+        Labeled {
+            label: @tr("Root font size (px)");
+            value <=> CssToolsState.root-size;
+            field-width: 90px;
+            edited => {
+                CssToolsState.convert();
+            }
+        }
+        Labeled {
+            label: @tr("Parent font size (px)");
+            value <=> CssToolsState.parent-size;
+            field-width: 90px;
+            edited => {
+                CssToolsState.convert();
+            }
+        }
+        Labeled {
+            label: @tr("Viewport width (px)");
+            value <=> CssToolsState.viewport-width;
+            field-width: 90px;
+            edited => {
+                CssToolsState.convert();
+            }
+        }
+        Labeled {
+            label: @tr("Viewport height (px)");
+            value <=> CssToolsState.viewport-height;
+            field-width: 90px;
+            edited => {
+                CssToolsState.convert();
+            }
+        }
+    }
+
+    if CssToolsState.mode-index == 1: HorizontalLayout {
+        spacing: Theme.space-md;
+        alignment: start;
+
+        Labeled {
+            label: @tr("Foreground");
+            placeholder: "#1a2b3c";
+            value <=> CssToolsState.foreground;
+            field-width: 190px;
+            edited => {
+                CssToolsState.convert();
+            }
+        }
+        Button {
+            text: "⇄";
+            y: 18px;
+            clicked => {
+                CssToolsState.swap-colors();
+            }
+        }
+        Labeled {
+            label: @tr("Background");
+            placeholder: "#ffffff";
+            value <=> CssToolsState.background;
+            field-width: 190px;
+            edited => {
+                CssToolsState.convert();
+            }
+        }
+    }
+
+    if CssToolsState.mode-index == 1: Rectangle {
+        height: 72px;
+        border-radius: 8px;
+        background: CssToolsState.background-color;
+        border-width: 1px;
+        border-color: Theme.color-subtle;
+
+        Text {
+            text: @tr("The quick brown fox jumps over the lazy dog");
+            color: CssToolsState.foreground-color;
+            font-size: Theme.font-lg;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+    }
+
+    if !CssToolsState.error.is-empty: Text {
+        text: CssToolsState.error;
+        font-size: Theme.font-sm;
+        color: #e05050;
+        wrap: word-wrap;
+    }
+
+    ResultList {
+        rows: CssToolsState.rows;
+        vertical-stretch: 1;
+        copy-clicked(text) => {
+            CssToolsState.copy(text);
+        }
+    }
+}
