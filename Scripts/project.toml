@@ -33,3 +33,20 @@ exclude = [".claude/", "patches/", "app_licenses.json"]
 
 [repo]
 main_branch = "master"
+
+# Created by `repo.py init` and `repo.py labels`, next to the shared ones.
+
+[[repo.labels]]
+name = "area:calculator"
+color = "0e8a16"
+description = "The calculation engine and math"
+
+[[repo.labels]]
+name = "area:units"
+color = "1d76db"
+description = "Unit conversion"
+
+[[repo.labels]]
+name = "area:ui"
+color = "d4c5f9"
+description = "Pages and navigation"
